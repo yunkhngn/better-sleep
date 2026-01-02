@@ -20,7 +20,9 @@ const Storage = {
       skipUntil: null
     },
     lastTipDate: null,
-    currentSleepSession: null
+    currentSleepSession: null,
+    userName: null,
+    language: 'en'
   },
 
   /**

@@ -13,7 +13,9 @@ let state = {
   currentView: 'main',
   plannerMode: 'wake',
   settingsTab: 'reminder',
-  scheduleScope: 'everyday'
+  scheduleScope: 'everyday',
+  userName: null,
+  currentLang: 'en'
 };
 
 /**
@@ -22,14 +24,34 @@ let state = {
 async function init() {
   cacheElements();
   await loadState();
+  await i18n.loadLanguage();
+  state.currentLang = i18n.currentLang;
+  
+  // Check if user name is set
+  const userName = await Storage.get('userName');
+  if (!userName) {
+    showNameModal();
+    return; // Wait for name input before continuing
+  }
+  state.userName = userName;
+  
+  continueInit();
+}
+
+/**
+ * Continue initialization after name is set
+ */
+async function continueInit() {
   setupEventListeners();
   startClock();
   updateTimeOfDay();
+  updateGreeting();
   await updateUI();
   await loadSettings();
   await showTipIfAvailable();
   await checkBedtimeReminder();
   generateStars();
+  updateLanguageUI();
 }
 
 /**
@@ -113,6 +135,17 @@ function cacheElements() {
     reminderBanner: document.getElementById('reminderBanner'),
     reminderTime: document.getElementById('reminderTime'),
     
+    // Name modal
+    nameModal: document.getElementById('nameModal'),
+    nameInput: document.getElementById('nameInput'),
+    nameSubmit: document.getElementById('nameSubmit'),
+    
+    // Language buttons
+    langBtns: document.querySelectorAll('.lang-btn'),
+    
+    // Greeting elements
+    greetingText: document.querySelector('.greeting-text'),
+    
     // Stars container
     starsContainer: document.getElementById('starsContainer')
   };
@@ -194,6 +227,11 @@ function setupEventListeners() {
       btn.classList.add('active');
       state.scheduleScope = btn.dataset.scope;
     });
+  });
+  
+  // Language buttons
+  elements.langBtns.forEach(btn => {
+    btn.addEventListener('click', () => handleLanguageChange(btn.dataset.lang));
   });
   
   // Save settings
@@ -765,6 +803,82 @@ async function handleDeleteAllData() {
     btn.style.background = '';
     btn.style.borderColor = '';
   }
+}
+
+/**
+ * Show name input modal
+ */
+function showNameModal() {
+  elements.nameModal.classList.remove('hidden');
+  elements.nameInput.focus();
+  
+  // Handle submit
+  elements.nameSubmit.addEventListener('click', handleNameSubmit);
+  elements.nameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleNameSubmit();
+  });
+}
+
+/**
+ * Handle name submission
+ */
+async function handleNameSubmit() {
+  const name = elements.nameInput.value.trim();
+  if (name) {
+    state.userName = name;
+    await Storage.set({ userName: name });
+    elements.nameModal.classList.add('hidden');
+    continueInit();
+  } else {
+    elements.nameInput.focus();
+    elements.nameInput.style.borderColor = '#dc2626';
+    setTimeout(() => {
+      elements.nameInput.style.borderColor = '';
+    }, 1000);
+  }
+}
+
+/**
+ * Update greeting with user's name
+ */
+function updateGreeting() {
+  if (!elements.greetingText) return;
+  
+  const hour = new Date().getHours();
+  const name = state.userName || i18n.t('defaultName');
+  
+  let greetingKey;
+  if (hour >= 5 && hour < 12) {
+    greetingKey = 'greetingMorning';
+  } else if (hour >= 12 && hour < 17) {
+    greetingKey = 'greetingAfternoon';
+  } else if (hour >= 17 && hour < 21) {
+    greetingKey = 'greetingEvening';
+  } else {
+    greetingKey = 'greetingNight';
+  }
+  
+  elements.greetingText.textContent = i18n.t(greetingKey, { name });
+}
+
+/**
+ * Update language UI (button states)
+ */
+function updateLanguageUI() {
+  elements.langBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === state.currentLang);
+  });
+}
+
+/**
+ * Handle language change
+ */
+async function handleLanguageChange(lang) {
+  state.currentLang = lang;
+  await i18n.setLanguage(lang);
+  updateLanguageUI();
+  updateGreeting();
+  // Note: Full UI translation would update all data-i18n elements
 }
 
 // Initialize when DOM is ready

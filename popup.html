@@ -7,6 +7,21 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Name Input Modal -->
+  <div class="modal-overlay hidden" id="nameModal">
+    <div class="modal-card">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+      <h2 class="modal-title" data-i18n="welcomeTitle">Welcome!</h2>
+      <p class="modal-subtitle" data-i18n="whatsYourName">What's your name?</p>
+      <input type="text" class="modal-input" id="nameInput" data-i18n-placeholder="enterName" placeholder="Enter your name" maxlength="20">
+      <button class="modal-btn" id="nameSubmit" data-i18n="continueBtn">Continue</button>
+    </div>
+  </div>
+
   <div class="app-container" id="app">
     <!-- Day State: Light Theme -->
     <div class="main-panel" id="dayPanel">
@@ -232,14 +247,23 @@
           </div>
 
           <div class="settings-section">
-            <label class="settings-label">Apply to</label>
+            <label class="settings-label" data-i18n="applyTo">Apply to</label>
             <div class="scope-selector">
-              <button class="scope-btn active" data-scope="everyday">Every day</button>
-              <button class="scope-btn" data-scope="tomorrow">Tomorrow only</button>
+              <button class="scope-btn active" data-scope="everyday" data-i18n="everyDay">Every day</button>
+              <button class="scope-btn" data-scope="tomorrow" data-i18n="tomorrowOnly">Tomorrow only</button>
             </div>
           </div>
 
-          <button class="btn-save" id="saveSettings">Save Settings</button>
+          <div class="settings-section">
+            <label class="settings-label" data-i18n="language">Language</label>
+            <div class="language-selector">
+              <button class="lang-btn active" data-lang="en">English</button>
+              <button class="lang-btn" data-lang="vi">Tiếng Việt</button>
+              <button class="lang-btn" data-lang="jp">日本語</button>
+            </div>
+          </div>
+
+          <button class="btn-save" id="saveSettings" data-i18n="saveSettings">Save Settings</button>
 
           <!-- Danger Zone -->
           <div class="danger-zone">
@@ -378,6 +402,7 @@
   </div>
 
   <script src="modules/storage.js"></script>
+  <script src="modules/i18n.js"></script>
   <script src="modules/planner.js"></script>
   <script src="modules/reminder.js"></script>
   <script src="modules/summary.js"></script>
