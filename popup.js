@@ -422,7 +422,6 @@ async function handleMoodSelect(mood) {
   // Hide mood selector
   setTimeout(() => {
     elements.moodSelector.classList.add('hidden');
-    elements.actionPanel.classList.remove('hidden');
     elements.moodBtns.forEach(btn => btn.classList.remove('selected'));
   }, 300);
   
