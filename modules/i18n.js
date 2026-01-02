@@ -91,6 +91,7 @@ const i18n = {
       backToHome: 'Back to Home',
       backToHome: 'Back to Home',
       noData: 'No data',
+      chartDisclaimer: 'Sleep history (last 7 days)',
       
       // Insights
       insightMidCycle: "You woke up mid-cycle. This can feel groggy.",
@@ -208,6 +209,7 @@ const i18n = {
       
       // Chart
       mon: 'T2', tue: 'T3', wed: 'T4', thu: 'T5', fri: 'T6', sat: 'T7', sun: 'CN',
+      chartDisclaimer: 'Lịch sử giấc ngủ (7 ngày qua)',
       
       // Planner Extras
       minutes: 'phút',
