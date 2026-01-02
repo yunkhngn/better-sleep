@@ -468,10 +468,11 @@ async function handleSuggestionClick(item) {
   item.classList.add('confirmed');
   item.querySelector('.suggestion-cycles').innerHTML = 'Reminder set!';
   
-  // Go back to main after 1.5s
-  setTimeout(() => {
-    hideAllViews();
-  }, 1500);
+  // Go to settings view to show updated values
+  setTimeout(async () => {
+    showView('settings');
+    await loadSettings(); // Reload settings to show new values
+  }, 1000);
 }
 
 /**
