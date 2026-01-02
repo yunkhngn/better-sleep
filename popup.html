@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Better Sleep</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Main Horizontal Panel -->
+    <div class="main-panel">
+      <!-- Left Zone: Time Display -->
+      <div class="zone-left">
+        <div class="time-display" id="currentTime">--:--</div>
+        <svg class="day-night-icon" id="dayNightIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <!-- Moon icon (default, will be swapped by JS) -->
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+
+      <!-- Center Zone: Primary Action -->
+      <div class="zone-center">
+        <button class="btn-primary" id="primaryAction">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <span id="primaryActionText">Going to sleep</span>
+        </button>
+      </div>
+
+      <!-- Right Zone: Quick Actions -->
+      <div class="zone-right">
+        <button class="btn-icon" id="openPlanner" title="Sleep Planner">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </button>
+        <button class="btn-icon reminder-indicator" id="openSettings" title="Settings">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mood Selector (shown after waking) -->
+    <div class="mood-selector hidden" id="moodSelector">
+      <span class="mood-label">How do you feel?</span>
+      <button class="mood-btn refreshed" data-mood="refreshed">
+        <span class="mood-emoji">😊</span>
+        <span class="mood-text">Refreshed</span>
+      </button>
+      <button class="mood-btn okay" data-mood="okay">
+        <span class="mood-emoji">😐</span>
+        <span class="mood-text">Okay</span>
+      </button>
+      <button class="mood-btn tired" data-mood="tired">
+        <span class="mood-emoji">😴</span>
+        <span class="mood-text">Tired</span>
+      </button>
+    </div>
+
+    <!-- Sleep Planner View -->
+    <div class="view" id="plannerView">
+      <div class="view-header">
+        <h2 class="view-title">Sleep Planner</h2>
+        <button class="btn-close" id="closePlanner">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="planner-tabs">
+        <button class="planner-tab active" data-mode="wake">I want to wake at</button>
+        <button class="planner-tab" data-mode="sleep">I want to sleep at</button>
+      </div>
+
+      <div class="planner-input-group">
+        <label class="planner-label" id="plannerInputLabel">Target wake time</label>
+        <input type="time" class="planner-input" id="plannerTimeInput" value="07:00">
+      </div>
+
+      <div class="latency-row">
+        <span class="latency-label">Time to fall asleep:</span>
+        <input type="number" class="latency-input" id="latencyInput" value="15" min="0" max="60">
+        <span class="latency-label">min</span>
+      </div>
+
+      <div class="suggestions-title">Suggested times</div>
+      <div class="suggestions-list" id="suggestionsList">
+        <!-- Suggestions will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Settings View -->
+    <div class="view" id="settingsView">
+      <div class="view-header">
+        <h2 class="view-title">Settings</h2>
+        <button class="btn-close" id="closeSettings">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="reminder">Reminder</button>
+        <button class="nav-tab" data-tab="summary">Summary</button>
+        <button class="nav-tab" data-tab="weekly">Weekly</button>
+      </div>
+
+      <!-- Reminder Tab -->
+      <div class="settings-tab active" id="reminderTab">
+        <div class="settings-section">
+          <div class="toggle-row">
+            <span class="toggle-label">Bedtime reminder</span>
+            <label class="toggle">
+              <input type="checkbox" id="reminderEnabled">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section" id="reminderSettings">
+          <label class="settings-label">Target bedtime</label>
+          <input type="time" class="settings-input" id="targetBedtime" value="22:30">
+          <p class="settings-hint">You'll get a gentle reminder if it's past this time.</p>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Grace period (minutes)</label>
+          <input type="number" class="settings-input" id="graceMinutes" value="15" min="0" max="60" style="width: 100px;">
+          <p class="settings-hint">Reminder shows after bedtime + grace period.</p>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Apply to</label>
+          <div class="scope-selector">
+            <button class="scope-btn active" data-scope="everyday">Every day</button>
+            <button class="scope-btn" data-scope="tomorrow">Tomorrow only</button>
+          </div>
+        </div>
+
+        <button class="btn-save" id="saveSettings">Save Settings</button>
+      </div>
+
+      <!-- Summary Tab -->
+      <div class="settings-tab" id="summaryTab">
+        <div id="summaryContent">
+          <p class="text-muted" style="text-align: center;">No sleep data yet. Start by logging your sleep!</p>
+        </div>
+      </div>
+
+      <!-- Weekly Tab -->
+      <div class="settings-tab" id="weeklyTab">
+        <div class="chart-container">
+          <canvas class="chart-canvas" id="weeklyChart"></canvas>
+          <div class="chart-tooltip" id="chartTooltip"></div>
+        </div>
+        <p class="chart-disclaimer">Based on logged times only.</p>
+      </div>
+    </div>
+
+    <!-- Tip Banner -->
+    <div class="tip-banner hidden" id="tipBanner">
+      <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span class="tip-text" id="tipText"></span>
+    </div>
+
+    <!-- Footer -->
+    <div class="app-footer">
+      <p class="footer-text">This extension does not provide medical advice.</p>
+    </div>
+  </div>
+
+  <script src="modules/storage.js"></script>
+  <script src="modules/planner.js"></script>
+  <script src="modules/reminder.js"></script>
+  <script src="modules/summary.js"></script>
+  <script src="modules/tips.js"></script>
+  <script src="modules/chart.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
