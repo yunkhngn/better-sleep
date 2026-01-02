@@ -1180,6 +1180,19 @@ body {
   color: var(--light-text-secondary);
 }
 
+.footer-credit {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--accent-teal);
+  text-decoration: none;
+  margin-top: var(--space-1);
+  transition: opacity var(--transition-fast);
+}
+
+.footer-credit:hover {
+  opacity: 0.8;
+}
+
 /* ========================================
    Utility Classes
    ======================================== */
