@@ -4,10 +4,7 @@
   "version": "1.0.0",
   "description": "A simple sleep timing helper. Plan sleep cycles, log when you sleep and wake, and get gentle bedtime reminders. This extension does not provide medical advice.",
   "permissions": [
-    "storage",
-    "notifications",
-    "alarms",
-    "idle"
+    "storage"
   ],
   "action": {
     "default_popup": "popup.html",
