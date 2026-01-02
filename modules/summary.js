@@ -1,4 +1,4 @@
-ư/**
+/**
  * Summary Module - Better Sleep
  * Generates sleep summaries with simple insights
  */

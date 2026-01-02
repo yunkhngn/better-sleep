@@ -7,3 +7,5 @@ node_modules/
 
 # Development files
 generate-icons.js
+
+/version
