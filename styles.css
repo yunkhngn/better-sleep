@@ -1448,9 +1448,14 @@ body {
   transition: all var(--transition-fast);
 }
 
-.suggestion-item:hover {
+.suggestion-item:not(.readonly):hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
+}
+
+.suggestion-item.readonly {
+  cursor: default;
+  opacity: 0.9;
 }
 
 .suggestion-time {

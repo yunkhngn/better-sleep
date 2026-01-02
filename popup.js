@@ -548,8 +548,13 @@ async function updateSuggestions() {
     </div>
   `).join('');
   // Add click handlers for suggestions
+  // Add click handlers for suggestions (only if not in sleep mode)
   elements.suggestionsList.querySelectorAll('.suggestion-item').forEach(item => {
-    item.addEventListener('click', () => handleSuggestionClick(item));
+    if (mode === 'sleep') {
+      item.classList.add('readonly');
+    } else {
+      item.addEventListener('click', () => handleSuggestionClick(item));
+    }
   });
 }
 
