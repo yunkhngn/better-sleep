@@ -28,6 +28,7 @@ async function init() {
   await updateUI();
   await loadSettings();
   await showTipIfAvailable();
+  await checkBedtimeReminder();
   generateStars();
 }
 
@@ -107,6 +108,10 @@ function cacheElements() {
     // Tip
     tipBanner: document.getElementById('tipBanner'),
     tipText: document.getElementById('tipText'),
+    
+    // Reminder banner
+    reminderBanner: document.getElementById('reminderBanner'),
+    reminderTime: document.getElementById('reminderTime'),
     
     // Stars container
     starsContainer: document.getElementById('starsContainer')
@@ -286,6 +291,9 @@ async function handlePrimaryAction() {
     // Switch to night mode
     elements.dayPanel.classList.add('hidden');
     elements.nightPanel.classList.remove('hidden');
+    
+    // Hide reminder banner
+    elements.reminderBanner.classList.add('hidden');
     
     // Notify background to clear badge
     try {
@@ -556,6 +564,72 @@ async function showTipIfAvailable() {
   if (tip) {
     elements.tipText.textContent = tip;
     elements.tipBanner.classList.remove('hidden');
+  }
+}
+
+/**
+ * Check if past bedtime and show reminder banner
+ */
+async function checkBedtimeReminder() {
+  // Skip if already sleeping
+  if (state.isSleeping) {
+    elements.reminderBanner.classList.add('hidden');
+    return;
+  }
+  
+  const reminderState = await Storage.get('reminderState');
+  if (!reminderState?.enabled) {
+    elements.reminderBanner.classList.add('hidden');
+    return;
+  }
+  
+  const schedule = await Storage.getEffectiveSchedule();
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  
+  // Parse bedtime
+  const [bedHour, bedMin] = schedule.bedtime.split(':').map(Number);
+  const bedtimeMinutes = bedHour * 60 + bedMin;
+  const graceMinutes = schedule.graceMinutes || 15;
+  const reminderMinutes = bedtimeMinutes + graceMinutes;
+  
+  // Parse wake time
+  const [wakeHour, wakeMin] = (schedule.wakeTime || '07:00').split(':').map(Number);
+  const wakeMinutes = wakeHour * 60 + wakeMin;
+  
+  // Check if current time is past bedtime+grace but before wake time
+  let isPastBedtime = false;
+  let minutesPast = 0;
+  
+  // Handle overnight (bedtime after midnight scenarios)
+  if (bedtimeMinutes < wakeMinutes) {
+    // Normal case: bedtime < wake time (e.g., 22:30 to 07:00)
+    isPastBedtime = currentMinutes >= reminderMinutes && currentMinutes < wakeMinutes;
+    minutesPast = currentMinutes - reminderMinutes;
+  } else {
+    // bedtime after wake time means overnight
+    isPastBedtime = currentMinutes >= reminderMinutes || currentMinutes < wakeMinutes;
+    if (currentMinutes >= reminderMinutes) {
+      minutesPast = currentMinutes - reminderMinutes;
+    } else {
+      minutesPast = (24 * 60 - reminderMinutes) + currentMinutes;
+    }
+  }
+  
+  if (isPastBedtime && minutesPast >= 0) {
+    // Show reminder
+    elements.reminderBanner.classList.remove('hidden');
+    
+    // Update time text
+    if (minutesPast < 60) {
+      elements.reminderTime.textContent = `Past bedtime by ${minutesPast} min`;
+    } else {
+      const hours = Math.floor(minutesPast / 60);
+      const mins = minutesPast % 60;
+      elements.reminderTime.textContent = `Past bedtime by ${hours}h ${mins}m`;
+    }
+  } else {
+    elements.reminderBanner.classList.add('hidden');
   }
 }
 
