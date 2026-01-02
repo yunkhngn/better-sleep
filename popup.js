@@ -637,7 +637,7 @@ function toggleReminderSettings() {
  */
 async function loadSettings() {
   // Load based on current scope to show what user is editing
-  const defaultSchedule = await Storage.get('defaultSchedule');
+  const defaultSchedule = await Storage.get('defaultSchedule') || Storage.defaults.defaultSchedule;
   let scheduleToDisplay = defaultSchedule;
   
   if (state.scheduleScope === 'tomorrow') {
@@ -646,20 +646,14 @@ async function loadSettings() {
     if (override) {
       scheduleToDisplay = { ...defaultSchedule, ...override };
     }
-  } else {
-    // For 'everyday', just use default schedule
-    // But we might want to warn if there's an active override?
-    // For now simplistic approach
   }
 
-  const reminderState = await Storage.get('reminderState');
+  const reminderState = await Storage.get('reminderState') || Storage.defaults.reminderState;
   
-  elements.reminderEnabled.checked = reminderState?.enabled || false;
+  elements.reminderEnabled.checked = reminderState.enabled || false;
   elements.targetBedtime.value = scheduleToDisplay.bedtime || '22:30';
   elements.graceMinutes.value = scheduleToDisplay.graceMinutes || 15;
   elements.latencyInput.value = scheduleToDisplay.sleepLatency || 15;
-  
-  elements.latencyInput.value = schedule.sleepLatency || 15;
   
   if (elements.currentNameDisplay) {
     elements.currentNameDisplay.textContent = state.userName || i18n.t('defaultName');
@@ -696,8 +690,11 @@ async function saveSettings() {
   // Visual feedback
   const btn = elements.saveSettings;
   const originalText = i18n.t('saveSettings'); // Use key to get current language text
-  btn.textContent = i18n.t('saved');
+  btn.textContent = i18n.t('saved'); // Saved!
   btn.style.background = 'var(--accent-teal)';
+  
+  // Reload settings to confirm persistence
+  await loadSettings();
   
   setTimeout(() => {
     btn.textContent = originalText;
