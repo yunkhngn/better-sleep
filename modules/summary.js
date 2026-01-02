@@ -58,27 +58,27 @@ const Summary = {
     
     // Check for mid-cycle wake
     if (remainder > 0.3 && remainder < 0.7) {
-      return "You woke up mid-cycle. This can feel groggy.";
+      return i18n.t('insightMidCycle');
     }
     
     // Check for very short sleep
     if (completeCycles < 4) {
-      return "Shorter sleep may affect how you feel during the day.";
+      return i18n.t('insightShort');
     }
     
     // Check for very long sleep
     if (completeCycles > 7) {
-      return "Longer sleep isn't always better. Quality matters too.";
+      return i18n.t('insightLong');
     }
     
     // If mood is tired but good cycle count
     if (mood === 'tired' && completeCycles >= 5 && remainder < 0.3) {
-      return "Good timing, but tiredness can have other causes.";
+      return i18n.t('insightTired');
     }
     
     // Good timing
     if (remainder < 0.2 || remainder > 0.8) {
-      return "You woke up near the end of a cycle. This usually feels better.";
+      return i18n.t('insightGood');
     }
     
     return null;

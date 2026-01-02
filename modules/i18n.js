@@ -23,7 +23,9 @@ const i18n = {
       
       // Reminder banner
       timeToSleep: 'Time to sleep, {name}',
+      timeToSleep: 'Time to sleep, {name}',
       pastBedtimeBy: 'Past bedtime by {time}',
+      alarm: 'Alarm',
       
       // Main actions
       goingToSleep: 'Going to sleep',
@@ -66,6 +68,8 @@ const i18n = {
       tomorrowOnly: 'Tomorrow only',
       saveSettings: 'Save Settings',
       saved: 'Saved!',
+      personalization: 'Personalization',
+      changeName: 'Change Name',
       
       // Danger zone
       deleteAllData: 'Delete all data',
@@ -83,7 +87,22 @@ const i18n = {
       wentToSleep: 'Went to sleep',
       wokeUp: 'Woke up',
       backToHome: 'Back to Home',
+      backToHome: 'Back to Home',
       noData: 'No data',
+      
+      // Insights
+      insightMidCycle: "You woke up mid-cycle. This can feel groggy.",
+      insightShort: "Shorter sleep may affect how you feel during the day.",
+      insightLong: "Longer sleep isn't always better. Quality matters too.",
+      insightTired: "Good timing, but tiredness can have other causes.",
+      insightGood: "You woke up near the end of a cycle. This usually feels better.",
+      
+      // Chart
+      mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun',
+      
+      // Planner Extras
+      minutes: 'min',
+      cycleExplanation: 'A sleep cycle lasts ~90 mins. Waking up between cycles helps you feel refreshed.',
       
       // Language
       language: 'Language',
@@ -110,7 +129,9 @@ const i18n = {
       
       // Banner nhắc nhở
       timeToSleep: 'Đến giờ ngủ rồi, {name}',
+      timeToSleep: 'Đến giờ ngủ rồi, {name}',
       pastBedtimeBy: 'Đã quá giờ ngủ {time}',
+      alarm: 'Báo thức',
       
       // Hành động chính
       goingToSleep: 'Đi ngủ thôi',
@@ -153,6 +174,8 @@ const i18n = {
       tomorrowOnly: 'Chỉ ngày mai',
       saveSettings: 'Lưu cài đặt',
       saved: 'Đã lưu!',
+      personalization: 'Cá nhân hóa',
+      changeName: 'Đổi tên',
       
       // Vùng nguy hiểm
       deleteAllData: 'Xóa tất cả dữ liệu',
@@ -171,6 +194,20 @@ const i18n = {
       wokeUp: 'Thức dậy',
       backToHome: 'Về trang chính',
       noData: 'Chưa có dữ liệu',
+      
+      // Insights
+      insightMidCycle: "Bạn thức dậy giữa chu kỳ. Có thể sẽ thấy hơi mệt.",
+      insightShort: "Ngủ ít có thể ảnh hưởng đến năng lượng trong ngày.",
+      insightLong: "Ngủ nhiều chưa chắc đã tốt. Chất lượng mới quan trọng.",
+      insightTired: "Thời điểm tốt, nhưng mệt mỏi có thể do lý do khác.",
+      insightGood: "Bạn thức dậy vào cuối chu kỳ. Thường sẽ thấy khỏe hơn.",
+      
+      // Chart
+      mon: 'T2', tue: 'T3', wed: 'T4', thu: 'T5', fri: 'T6', sat: 'T7', sun: 'CN',
+      
+      // Planner Extras
+      minutes: 'phút',
+      cycleExplanation: 'Mỗi chu kỳ khoảng 90 phút. Thức dậy giữa các chu kỳ giúp bạn tỉnh táo hơn.',
       
       // Ngôn ngữ
       language: 'Ngôn ngữ',
@@ -197,7 +234,9 @@ const i18n = {
       
       // リマインダーバナー
       timeToSleep: '寝る時間だよ、{name}',
+      timeToSleep: '寝る時間だよ、{name}',
       pastBedtimeBy: '就寝時間を{time}過ぎています',
+      alarm: 'アラーム',
       
       // メインアクション
       goingToSleep: '寝ます',
@@ -240,6 +279,8 @@ const i18n = {
       tomorrowOnly: '明日だけ',
       saveSettings: '設定を保存',
       saved: '保存しました！',
+      personalization: 'パーソナライズ',
+      changeName: '名前を変更',
       
       // 危険ゾーン
       deleteAllData: 'すべてのデータを削除',
@@ -258,6 +299,20 @@ const i18n = {
       wokeUp: '起床',
       backToHome: 'ホームに戻る',
       noData: 'データなし',
+      
+      // Insights
+      insightMidCycle: "サイクルの途中で起きました。眠気を感じるかもしれません。",
+      insightShort: "睡眠不足は日中の気分に影響する可能性があります。",
+      insightLong: "長く寝れば良いわけではありません。質が重要です。",
+      insightTired: "タイミングは良いですが、疲れには他の原因があるかもしれません。",
+      insightGood: "サイクルの終わりに起きました。すっきり目覚められます。",
+      
+      // Chart
+      mon: '月', tue: '火', wed: '水', thu: '木', fri: '金', sat: '土', sun: '日',
+      
+      // Planner Extras
+      minutes: '分',
+      cycleExplanation: '睡眠サイクルは約90分です。サイクルの合間に起きるとすっきりします。',
       
       // 言語
       language: '言語',

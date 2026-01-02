@@ -206,6 +206,83 @@
   color: var(--light-text);
 }
 
+/* Info Icon & Tooltip */
+.info-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: help;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.info-icon-container:hover {
+  color: var(--accent-teal);
+}
+
+.info-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.info-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  padding: 10px;
+  margin-top: 8px;
+  background: var(--surface-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px);
+  transition: all 0.2s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.info-icon-container:hover .info-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Summary Insight Redesign */
+.summary-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  border-radius: 12px;
+}
+
+.insight-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--accent-teal);
+  background: rgba(45, 212, 191, 0.2);
+  border-radius: 50%;
+  padding: 4px;
+  box-sizing: content-box;
+}
+
+.insight-text {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .lang-btn.active {
   color: var(--accent-teal);
   border-color: var(--accent-teal);
@@ -823,6 +900,84 @@ body {
 /* ========================================
    Mood Selector
    ======================================== */
+/* Morning Log Redesign */
+.mood-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.mood-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.mood-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.mood-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mood-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.mood-btn svg {
+  width: 32px;
+  height: 32px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.mood-btn.refreshed:hover,
+.mood-btn.refreshed.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.mood-btn.okay:hover,
+.mood-btn.okay.active {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.mood-btn.tired:hover,
+.mood-btn.tired.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #a78bfa;
+}
+
+.mood-btn.active svg {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.mood-btn .mood-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .mood-selector {
   display: flex;
   align-items: center;

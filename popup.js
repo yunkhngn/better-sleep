@@ -134,12 +134,15 @@ function cacheElements() {
     
     // Reminder banner
     reminderBanner: document.getElementById('reminderBanner'),
+    reminderTitle: document.querySelector('.reminder-title'),
     reminderTime: document.getElementById('reminderTime'),
     
     // Name modal
     nameModal: document.getElementById('nameModal'),
     nameInput: document.getElementById('nameInput'),
     nameSubmit: document.getElementById('nameSubmit'),
+    changeNameBtn: document.getElementById('changeNameBtn'),
+    currentNameDisplay: document.getElementById('currentNameDisplay'),
     
     // Celestial icons
     celestialDisplay: document.getElementById('celestialDisplay'),
@@ -247,6 +250,13 @@ function setupEventListeners() {
   
   // Delete all data
   elements.deleteAllData.addEventListener('click', handleDeleteAllData);
+
+  // Change Name
+  if (elements.changeNameBtn) {
+    elements.changeNameBtn.addEventListener('click', () => {
+      showNameModal();
+    });
+  }
 }
 
 /**
@@ -272,7 +282,14 @@ function updateClock() {
   // Update date text
   if (elements.dateText) {
     const options = { month: 'long', day: 'numeric', year: 'numeric' };
-    elements.dateText.textContent = now.toLocaleDateString('en-US', options);
+    // Map internal lang code to locale string
+    const locales = {
+      en: 'en-US',
+      vi: 'vi-VN',
+      jp: 'ja-JP'
+    };
+    const locale = locales[state.currentLang] || 'en-US';
+    elements.dateText.textContent = now.toLocaleDateString(locale, options);
   }
 }
 
@@ -319,14 +336,20 @@ async function updateUI() {
   const moonSVG = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
   const sunSVG = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>';
   
-  if (state.isSleeping) {
-    elements.primaryActionText.textContent = "I'm awake";
-    elements.primaryActionIcon.innerHTML = sunSVG;
-    elements.primaryAction.classList.remove('primary');
-  } else {
-    elements.primaryActionText.textContent = "Going to sleep";
+  if (!state.isSleeping) {
+    elements.primaryActionText.dataset.i18n = 'goingToSleep';
+    elements.primaryActionText.textContent = i18n.t('goingToSleep');
     elements.primaryActionIcon.innerHTML = moonSVG;
-    elements.primaryAction.classList.add('primary');
+    
+    // Update main container class
+    elements.mainContainer.classList.remove('sleeping-mode');
+  } else {
+    elements.primaryActionText.dataset.i18n = 'imAwake';
+    elements.primaryActionText.textContent = i18n.t('imAwake');
+    elements.primaryActionIcon.innerHTML = sunSVG;
+    
+    // Update main container class
+    elements.mainContainer.classList.add('sleeping-mode');
   }
   
   // Update alarm time from schedule
@@ -454,9 +477,11 @@ function switchPlannerMode(mode) {
     tab.classList.toggle('active', tab.dataset.mode === mode);
   });
   
-  elements.plannerInputLabel.textContent = mode === 'wake' 
-    ? 'Target wake time' 
-    : 'Target sleep time';
+  elements.plannerInputLabel.dataset.i18n = mode === 'wake' 
+    ? 'targetWakeTime' 
+    : 'targetSleepTime';
+    
+  elements.plannerInputLabel.textContent = i18n.t(elements.plannerInputLabel.dataset.i18n);
   
   updateSuggestions();
 }
@@ -499,7 +524,7 @@ async function handleSuggestionClick(item) {
   if (!item.dataset.confirm) {
     item.dataset.confirm = 'true';
     item.classList.add('confirming');
-    item.querySelector('.suggestion-cycles').innerHTML = 'Click to set<br>as bedtime';
+    item.querySelector('.suggestion-cycles').innerHTML = i18n.t('clickToSetBedtime').replace('\n', '<br>');
     
     // Reset after 3 seconds
     setTimeout(() => {
@@ -528,7 +553,7 @@ async function handleSuggestionClick(item) {
   // Visual feedback
   item.classList.remove('confirming');
   item.classList.add('confirmed');
-  item.querySelector('.suggestion-cycles').innerHTML = 'Reminder set!';
+  item.querySelector('.suggestion-cycles').textContent = i18n.t('reminderSet');
   
   // Go to settings view to show updated values
   setTimeout(async () => {
@@ -581,6 +606,12 @@ async function loadSettings() {
   elements.graceMinutes.value = schedule.graceMinutes || 15;
   elements.latencyInput.value = schedule.sleepLatency || 15;
   
+  elements.latencyInput.value = schedule.sleepLatency || 15;
+  
+  if (elements.currentNameDisplay) {
+    elements.currentNameDisplay.textContent = state.userName || i18n.t('defaultName');
+  }
+
   toggleReminderSettings();
 }
 
@@ -611,8 +642,8 @@ async function saveSettings() {
   
   // Visual feedback
   const btn = elements.saveSettings;
-  const originalText = btn.textContent;
-  btn.textContent = 'Saved!';
+  const originalText = i18n.t('saveSettings'); // Use key to get current language text
+  btn.textContent = i18n.t('saved');
   btn.style.background = 'var(--accent-teal)';
   
   setTimeout(() => {
@@ -631,7 +662,7 @@ async function loadSummary() {
     loadSummaryData(lastLog);
   } else {
     elements.cycleCount.textContent = '-';
-    elements.sleepDuration.textContent = 'No data';
+    elements.sleepDuration.textContent = i18n.t('noData');
     elements.sleepTimeValue.textContent = '--:--';
     elements.wakeTimeValue.textContent = '--:--';
     elements.summaryInsight.classList.add('hidden');
@@ -753,12 +784,18 @@ async function checkBedtimeReminder() {
     elements.reminderBanner.classList.remove('hidden');
     
     // Update time text
+    // Update time text
+    const name = state.userName || i18n.t('friend');
+    if (elements.reminderTitle) {
+      elements.reminderTitle.textContent = i18n.t('timeToSleep', { name });
+    }
+
     if (minutesPast < 60) {
-      elements.reminderTime.textContent = `Past bedtime by ${minutesPast} min`;
+      elements.reminderTime.textContent = i18n.t('pastBedtimeBy', { time: `${minutesPast} min` });
     } else {
       const hours = Math.floor(minutesPast / 60);
       const mins = minutesPast % 60;
-      elements.reminderTime.textContent = `Past bedtime by ${hours}h ${mins}m`;
+      elements.reminderTime.textContent = i18n.t('pastBedtimeBy', { time: `${hours}h ${mins}m` });
     }
     
     // Set badge on extension icon
@@ -781,9 +818,9 @@ async function handleDeleteAllData() {
   const btn = elements.deleteAllData;
   
   // First click - show confirmation
-  if (!btn.dataset.confirm) {
+    if (!btn.dataset.confirm) {
     btn.dataset.confirm = 'true';
-    btn.textContent = 'Click again to confirm';
+    btn.textContent = i18n.t('clickToConfirm');
     btn.style.background = '#fef2f2';
     btn.style.borderColor = '#dc2626';
     
@@ -791,7 +828,7 @@ async function handleDeleteAllData() {
     setTimeout(() => {
       if (btn.dataset.confirm) {
         delete btn.dataset.confirm;
-        btn.textContent = 'Delete All Data';
+        btn.textContent = i18n.t('deleteButton');
         btn.style.background = '';
         btn.style.borderColor = '';
       }
@@ -806,7 +843,7 @@ async function handleDeleteAllData() {
     await Storage.clearAll();
     
     // Visual feedback
-    btn.textContent = 'Data deleted';
+    btn.textContent = i18n.t('dataDeleted');
     btn.style.color = 'var(--accent-teal)';
     btn.style.borderColor = 'var(--accent-teal)';
     btn.style.background = '';
@@ -817,7 +854,7 @@ async function handleDeleteAllData() {
     await loadSettings();
     
     setTimeout(() => {
-      btn.textContent = 'Delete All Data';
+      btn.textContent = i18n.t('deleteButton');
       btn.style.color = '';
       btn.style.borderColor = '';
     }, 2000);
@@ -849,10 +886,25 @@ function showNameModal() {
 async function handleNameSubmit() {
   const name = elements.nameInput.value.trim();
   if (name) {
-    state.userName = name;
     await Storage.set({ userName: name });
+    
+    // Hide modal
     elements.nameModal.classList.add('hidden');
-    continueInit();
+    
+    // Update state and UI
+    state.userName = name;
+    updateGreeting();
+    await updateUI(); // Update dynamic elements
+    
+    // Update settings display if visible
+    if (elements.currentNameDisplay) {
+      elements.currentNameDisplay.textContent = name;
+    }
+    
+    // Continue init if first run
+    if (!state.userName) { // This condition seems to be intended for a first-run check, but `state.userName` is set above.
+      continueInit();
+    }
   } else {
     elements.nameInput.focus();
     elements.nameInput.style.borderColor = '#dc2626';
@@ -902,7 +954,10 @@ async function handleLanguageChange(lang) {
   await i18n.setLanguage(lang);
   updateLanguageUI();
   updateGreeting();
+  updateClock(); // Update date format
   updateAllText();
+  // Update dynamic elements (e.g. primary action text, reminder banner)
+  await updateUI();
 }
 
 /**
