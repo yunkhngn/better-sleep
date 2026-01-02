@@ -17,8 +17,8 @@ const i18n = {
       greetingMorning: 'Good morning, {name}',
       greetingAfternoon: 'Good afternoon, {name}',
       greetingEvening: 'Good evening, {name}',
-      greetingNight: 'Good night, {name}',
-      sleepWell: 'Sleep well',
+      greetingNight: 'Sleep well, {name}',
+      sleepWell: 'Sleep well, {name}',
       defaultName: 'friend',
       
       // Reminder banner

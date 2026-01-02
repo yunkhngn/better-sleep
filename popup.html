@@ -203,7 +203,11 @@
 
         <div class="planner-input-group">
           <label class="planner-label" id="plannerInputLabel" data-i18n="targetWakeTime">Target wake time</label>
-          <input type="time" class="planner-input" id="plannerTimeInput" value="07:00">
+          <div class="time-picker-custom">
+            <select id="plannerHour" class="time-select"></select>
+            <span class="time-separator">:</span>
+            <select id="plannerMinute" class="time-select"></select>
+          </div>
         </div>
 
         <div class="latency-row">

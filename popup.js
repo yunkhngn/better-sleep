@@ -96,7 +96,8 @@ function cacheElements() {
     // Planner
     plannerTabs: document.querySelectorAll('.planner-tab'),
     plannerInputLabel: document.getElementById('plannerInputLabel'),
-    plannerTimeInput: document.getElementById('plannerTimeInput'),
+    plannerHour: document.getElementById('plannerHour'),
+    plannerMinute: document.getElementById('plannerMinute'),
     latencyInput: document.getElementById('latencyInput'),
     suggestionsList: document.getElementById('suggestionsList'),
     
@@ -216,12 +217,20 @@ function setupEventListeners() {
   
   // Planner tabs
   elements.plannerTabs.forEach(tab => {
-    tab.addEventListener('click', () => switchPlannerMode(tab.dataset.mode));
+    tab.addEventListener('click', () => {
+      switchPlannerMode(tab.dataset.mode);
+    });
   });
   
-  // Planner inputs
-  elements.plannerTimeInput.addEventListener('change', updateSuggestions);
-  elements.latencyInput.addEventListener('change', updateSuggestions);
+  // Planner Time Picker
+  if (elements.plannerHour && elements.plannerMinute) {
+    populateTimeSelects();
+    elements.plannerHour.addEventListener('change', updateSuggestions);
+    elements.plannerMinute.addEventListener('change', updateSuggestions);
+  }
+  
+  // Suggestions interaction
+  elements.suggestionsList.addEventListener('click', handleSuggestionClick);
   
   // Settings tabs
   elements.navTabs.forEach(tab => {
@@ -487,26 +496,51 @@ function switchPlannerMode(mode) {
 }
 
 /**
+ * Populate hour and minute select elements
+ */
+function populateTimeSelects() {
+  for (let i = 0; i < 24; i++) {
+    const option = document.createElement('option');
+    option.value = String(i).padStart(2, '0');
+    option.textContent = String(i).padStart(2, '0');
+    elements.plannerHour.appendChild(option);
+  }
+  for (let i = 0; i < 60; i += 5) { // Increment by 5 minutes
+    const option = document.createElement('option');
+    option.value = String(i).padStart(2, '0');
+    option.textContent = String(i).padStart(2, '0');
+    elements.plannerMinute.appendChild(option);
+  }
+
+  // Set default to current time
+  const now = new Date();
+  elements.plannerHour.value = String(now.getHours()).padStart(2, '0');
+  elements.plannerMinute.value = String(Math.round(now.getMinutes() / 5) * 5).padStart(2, '0');
+}
+
+/**
  * Update suggestions based on input
  */
-function updateSuggestions() {
-  const time = elements.plannerTimeInput.value;
-  const latency = parseInt(elements.latencyInput.value) || 15;
+async function updateSuggestions() {
+  const schedule = await Storage.getEffectiveSchedule();
+  const mode = state.plannerMode;
+  const hour = elements.plannerHour.value;
+  const minute = elements.plannerMinute.value;
+  const time = `${hour}:${minute}`;
   
-  let suggestions;
-  if (state.plannerMode === 'wake') {
-    suggestions = Planner.calculateSleepTimes(time, latency);
-  } else {
-    suggestions = Planner.calculateWakeTimes(time, latency);
-  }
+  const suggestions = Planner.calculateSuggestions(time, mode, schedule.sleepLatency);
   
+  // Clear list
+  elements.suggestionsList.innerHTML = '';
+  
+  if (!suggestions || suggestions.length === 0) return;
+
   elements.suggestionsList.innerHTML = suggestions.map(s => `
     <div class="suggestion-item" data-time="${s.time}" data-wake="${time}">
       <span class="suggestion-time">${s.time}</span>
       <span class="suggestion-cycles">${s.cycles} cycles<br>${s.duration}</span>
     </div>
   `).join('');
-  
   // Add click handlers for suggestions
   elements.suggestionsList.querySelectorAll('.suggestion-item').forEach(item => {
     item.addEventListener('click', () => handleSuggestionClick(item));
@@ -958,6 +992,32 @@ async function handleLanguageChange(lang) {
   updateAllText();
   // Update dynamic elements (e.g. primary action text, reminder banner)
   await updateUI();
+}
+
+/**
+ * Populate custom time picker selects
+ */
+function populateTimeSelects() {
+  // Hours (00-23)
+  elements.plannerHour.innerHTML = '';
+  for (let i = 0; i < 24; i++) {
+    const val = i.toString().padStart(2, '0');
+    const option = document.createElement('option');
+    option.value = val;
+    option.textContent = val;
+    if (i === 7) option.selected = true; // Default 07:00
+    elements.plannerHour.appendChild(option);
+  }
+  
+  // Minutes (00-55, step 5)
+  elements.plannerMinute.innerHTML = '';
+  for (let i = 0; i < 60; i += 5) {
+    const val = i.toString().padStart(2, '0');
+    const option = document.createElement('option');
+    option.value = val;
+    option.textContent = val;
+    elements.plannerMinute.appendChild(option);
+  }
 }
 
 /**
