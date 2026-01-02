@@ -250,6 +250,7 @@ function setupEventListeners() {
       elements.scopeBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.scheduleScope = btn.dataset.scope;
+      loadSettings(); // Reload settings when scope changes
     });
   });
   
@@ -635,13 +636,28 @@ function toggleReminderSettings() {
  * Load settings from storage
  */
 async function loadSettings() {
-  const schedule = await Storage.getEffectiveSchedule();
+  // Load based on current scope to show what user is editing
+  const defaultSchedule = await Storage.get('defaultSchedule');
+  let scheduleToDisplay = defaultSchedule;
+  
+  if (state.scheduleScope === 'tomorrow') {
+    const override = await Storage.get('temporaryOverride');
+    // Use override if valid for tomorrow (or future)
+    if (override) {
+      scheduleToDisplay = { ...defaultSchedule, ...override };
+    }
+  } else {
+    // For 'everyday', just use default schedule
+    // But we might want to warn if there's an active override?
+    // For now simplistic approach
+  }
+
   const reminderState = await Storage.get('reminderState');
   
   elements.reminderEnabled.checked = reminderState?.enabled || false;
-  elements.targetBedtime.value = schedule.bedtime || '22:30';
-  elements.graceMinutes.value = schedule.graceMinutes || 15;
-  elements.latencyInput.value = schedule.sleepLatency || 15;
+  elements.targetBedtime.value = scheduleToDisplay.bedtime || '22:30';
+  elements.graceMinutes.value = scheduleToDisplay.graceMinutes || 15;
+  elements.latencyInput.value = scheduleToDisplay.sleepLatency || 15;
   
   elements.latencyInput.value = schedule.sleepLatency || 15;
   
