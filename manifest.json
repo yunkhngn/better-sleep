@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Better Sleep",
   "version": "1.0.0",
-  "description": "A simple sleep timing helper. Plan sleep cycles, log when you sleep and wake, and get gentle bedtime reminders. This extension does not provide medical advice.",
+  "description": "Plan sleep cycles, track sleep duration, and get gentle bedtime reminders. A simple helper for better rest.",
   "permissions": [
     "storage"
   ],
