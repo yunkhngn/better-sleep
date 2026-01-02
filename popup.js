@@ -483,6 +483,9 @@ async function saveSettings() {
     enabled: elements.reminderEnabled.checked
   });
   
+  // Recheck reminder to update badge
+  await checkBedtimeReminder();
+  
   // Notify background to update alarms
   try {
     chrome.runtime.sendMessage({ action: 'settingsUpdated' });
@@ -568,18 +571,31 @@ async function showTipIfAvailable() {
 }
 
 /**
+ * Clear badge from extension icon
+ */
+function clearBadge() {
+  try {
+    chrome.action.setBadgeText({ text: '' });
+  } catch (e) {
+    // Running outside extension context
+  }
+}
+
+/**
  * Check if past bedtime and show reminder banner
  */
 async function checkBedtimeReminder() {
   // Skip if already sleeping
   if (state.isSleeping) {
     elements.reminderBanner.classList.add('hidden');
+    clearBadge();
     return;
   }
   
   const reminderState = await Storage.get('reminderState');
   if (!reminderState?.enabled) {
     elements.reminderBanner.classList.add('hidden');
+    clearBadge();
     return;
   }
   
@@ -638,13 +654,7 @@ async function checkBedtimeReminder() {
     }
   } else {
     elements.reminderBanner.classList.add('hidden');
-    
-    // Clear badge
-    try {
-      chrome.action.setBadgeText({ text: '' });
-    } catch (e) {
-      console.log('Running outside extension context');
-    }
+    clearBadge();
   }
 }
 
