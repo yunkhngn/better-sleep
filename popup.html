@@ -216,16 +216,17 @@
           <span class="latency-label" data-i18n="minutes">min</span>
         </div>
 
-        <div class="suggestions-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <div class="suggestions-title" data-i18n="suggestedTimes" style="margin-bottom: 0;">Suggested times</div>
-          <div class="info-icon-container">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="16" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <div class="info-tooltip" data-i18n="cycleExplanation">A sleep cycle lasts ~90 mins. Waking up between cycles helps you feel refreshed.</div>
-          </div>
+        <div class="suggestions-header">
+          <div class="suggestions-title" data-i18n="suggestedTimes">Suggested times</div>
+        </div>
+        
+        <div class="cycle-info-badge">
+          <svg class="info-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span data-i18n="cycleExplanation">A sleep cycle lasts ~90 mins. Waking up between cycles helps you feel refreshed.</span>
         </div>
         <div class="suggestions-list" id="suggestionsList"></div>
       </div>

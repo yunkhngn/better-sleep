@@ -1340,6 +1340,28 @@ body {
   padding-bottom: 2px;
 }
 
+/* Cycle Info Badge */
+.cycle-info-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  color: var(--accent-teal);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.info-icon-small {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .planner-input-group {
   margin-bottom: 24px;
   display: flex;
