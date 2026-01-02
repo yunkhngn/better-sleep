@@ -628,8 +628,23 @@ async function checkBedtimeReminder() {
       const mins = minutesPast % 60;
       elements.reminderTime.textContent = `Past bedtime by ${hours}h ${mins}m`;
     }
+    
+    // Set badge on extension icon
+    try {
+      chrome.action.setBadgeText({ text: '!' });
+      chrome.action.setBadgeBackgroundColor({ color: '#f59e0b' });
+    } catch (e) {
+      console.log('Running outside extension context');
+    }
   } else {
     elements.reminderBanner.classList.add('hidden');
+    
+    // Clear badge
+    try {
+      chrome.action.setBadgeText({ text: '' });
+    } catch (e) {
+      console.log('Running outside extension context');
+    }
   }
 }
 
