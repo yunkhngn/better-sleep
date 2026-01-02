@@ -414,11 +414,64 @@ function updateSuggestions() {
   }
   
   elements.suggestionsList.innerHTML = suggestions.map(s => `
-    <div class="suggestion-item">
+    <div class="suggestion-item" data-time="${s.time}" data-wake="${time}">
       <span class="suggestion-time">${s.time}</span>
       <span class="suggestion-cycles">${s.cycles} cycles<br>${s.duration}</span>
     </div>
   `).join('');
+  
+  // Add click handlers for suggestions
+  elements.suggestionsList.querySelectorAll('.suggestion-item').forEach(item => {
+    item.addEventListener('click', () => handleSuggestionClick(item));
+  });
+}
+
+/**
+ * Handle clicking on a suggested time
+ */
+async function handleSuggestionClick(item) {
+  const sleepTime = item.dataset.time;
+  const wakeTime = item.dataset.wake;
+  
+  // First click - show confirmation
+  if (!item.dataset.confirm) {
+    item.dataset.confirm = 'true';
+    item.classList.add('confirming');
+    item.querySelector('.suggestion-cycles').innerHTML = 'Click to set<br>as bedtime';
+    
+    // Reset after 3 seconds
+    setTimeout(() => {
+      if (item.dataset.confirm) {
+        delete item.dataset.confirm;
+        item.classList.remove('confirming');
+        updateSuggestions(); // Refresh to reset text
+      }
+    }, 3000);
+    return;
+  }
+  
+  // Second click - set reminder
+  delete item.dataset.confirm;
+  
+  // Update schedule with sleep time as bedtime and wake time
+  await Storage.updateSchedule({
+    bedtime: sleepTime,
+    wakeTime: wakeTime,
+    graceMinutes: 15
+  }, 'everyday');
+  
+  // Enable reminder
+  await Storage.updateReminderState({ enabled: true });
+  
+  // Visual feedback
+  item.classList.remove('confirming');
+  item.classList.add('confirmed');
+  item.querySelector('.suggestion-cycles').innerHTML = 'Reminder set!';
+  
+  // Go back to main after 1.5s
+  setTimeout(() => {
+    hideAllViews();
+  }, 1500);
 }
 
 /**

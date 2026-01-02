@@ -850,6 +850,35 @@ body {
   text-align: center;
 }
 
+.suggestion-item.confirming {
+  background: var(--accent-orange);
+  animation: pulse-confirm 0.5s ease;
+}
+
+.suggestion-item.confirming .suggestion-cycles {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.suggestion-item.confirmed {
+  background: var(--accent-teal);
+}
+
+.suggestion-item.confirmed .suggestion-cycles {
+  color: white;
+}
+
+@keyframes pulse-confirm {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
 /* ========================================
    Summary View
    ======================================== */
