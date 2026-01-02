@@ -5,7 +5,7 @@
 
 const i18n = {
   // Available languages
-  languages: ['en', 'vi', 'jp', 'fr', 'zh'],
+  languages: ['en', 'vi', 'jp', 'fr', 'zh', 'ko'],
   
   // Current language (default: English)
   currentLang: 'en',
@@ -542,6 +542,111 @@ const i18n = {
       // Footer
       medicalDisclaimer: '此扩展不提供医疗建议。',
       madeBy: '由...开发'
+    },
+    
+    ko: {
+      // Greetings
+      greetingMorning: '좋은 아침입니다, {name}',
+      greetingAfternoon: '안녕하세요, {name}',
+      greetingEvening: '좋은 저녁입니다, {name}',
+      greetingNight: '안녕히 주무세요, {name}',
+      sleepWell: '안녕히 주무세요',
+      defaultName: '친구',
+      
+      // Reminder banner
+      timeToSleep: '잘 시간입니다, {name}',
+      pastBedtimeBy: '취침 시간이 {time} 지났습니다',
+      alarm: '알람',
+      
+      // Main actions
+      goingToSleep: '자러 가기',
+      imAwake: '일어났어요',
+      howDoYouFeel: '기분이 어떠신가요?',
+      refreshed: '상쾌해요',
+      okay: '괜찮아요',
+      tired: '피곤해요',
+      
+      // Navigation
+      planner: '플래너',
+      settings: '설정',
+      summary: '요약',
+      
+      // Planner
+      sleepPlanner: '수면 플래너',
+      planSleepCycles: '수면 사이클 계획',
+      wantToWakeAt: '기상 시간',
+      wantToSleepAt: '취침 시간',
+      targetWakeTime: '목표 기상 시간',
+      targetSleepTime: '목표 취침 시간',
+      timeToFallAsleep: '잠들기까지 걸리는 시간',
+      suggestedTimes: '추천 시간',
+      cycles: '사이클',
+      clickToSetBedtime: '클릭하여\n취침 시간으로 설정',
+      reminderSet: '알림이 설정되었습니다!',
+      
+      // Settings
+      settingsTitle: '설정',
+      customizeExperience: '사용자 맞춤 설정',
+      reminder: '알림',
+      weekly: '주간',
+      bedtimeReminder: '취침 알림',
+      targetBedtime: '목표 취침 시간',
+      gentleReminderHint: '이 시간 이후 부드러운 알림을 받게 됩니다.',
+      gracePeriod: '유예 시간',
+      gracePeriodHint: '취침 시간 후 알림 전 대기 분.',
+      applyTo: '적용 대상',
+      everyDay: '매일',
+      tomorrowOnly: '내일만',
+      saveSettings: '설정 저장',
+      saved: '저장됨!',
+      personalization: '개인 설정',
+      displayName: '나의 이름',
+      changeName: '이름 변경',
+      
+      // Danger zone
+      deleteAllData: '모든 데이터 삭제',
+      deleteHint: '모든 수면 기록이 삭제되고 설정이 초기화됩니다.',
+      deleteButton: '모든 데이터 삭제',
+      clickToConfirm: '다시 클릭하여 확인',
+      dataDeleted: '데이터 삭제됨',
+      
+      // Summary
+      sleepSummary: '수면 요약',
+      lastNight: '지난밤',
+      sleepDuration: '수면 시간',
+      sleepInfo: '수면 정보',
+      seeGraph: '그래프 보기',
+      wentToSleep: '취침',
+      wokeUp: '기상',
+      backToHome: '홈으로',
+      noData: '데이터 없음',
+      
+      // Insights
+      insightMidCycle: "수면 사이클 중간에 깼습니다. 피곤할 수 있습니다.",
+      insightShort: "수면 시간이 부족하면 하루 컨디션에 영향을 줄 수 있습니다.",
+      insightLong: "오래 잔다고 무조건 좋은 것은 아닙니다. 수면의 질이 중요합니다.",
+      insightTired: "타이밍은 좋지만, 피로에는 다른 원인이 있을 수 있습니다.",
+      insightGood: "사이클이 끝날 때 일어났습니다. 상쾌한 기분이 들 것입니다.",
+      
+      // Chart
+      mon: '월', tue: '화', wed: '수', thu: '목', fri: '금', sat: '토', sun: '일',
+      
+      // Planner Extras
+      minutes: '분',
+      cycleExplanation: '수면 사이클은 약 90분입니다. 사이클 사이에 일어나면 상쾌합니다.',
+      
+      // Language
+      language: '언어',
+      
+      // Name input
+      welcomeTitle: '환영합니다!',
+      whatsYourName: '이름이 무엇인가요?',
+      enterName: '이름 입력',
+      continueBtn: '계속',
+      
+      // Footer
+      medicalDisclaimer: '이 확장 프로그램은 의학적 조언을 제공하지 않습니다.',
+      madeBy: 'Developed by'
     }
   },
   
@@ -588,7 +693,8 @@ const i18n = {
       vi: 'Tiếng Việt',
       jp: '日本語',
       fr: 'Français',
-      zh: '中文'
+      zh: '中文',
+      ko: '한국어'
     };
     return names[lang] || lang;
   }
