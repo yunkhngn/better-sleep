@@ -5,7 +5,7 @@
 
 const i18n = {
   // Available languages
-  languages: ['en', 'vi', 'jp'],
+  languages: ['en', 'vi', 'jp', 'fr', 'zh'],
   
   // Current language (default: English)
   currentLang: 'en',
@@ -332,6 +332,216 @@ const i18n = {
       // フッター
       medicalDisclaimer: 'この拡張機能は医療アドバイスを提供しません。',
       madeBy: '作成者'
+    },
+    
+    fr: {
+      // Greetings
+      greetingMorning: 'Bonjour, {name}',
+      greetingAfternoon: 'Bon après-midi, {name}',
+      greetingEvening: 'Bonsoir, {name}',
+      greetingNight: 'Dormez bien, {name}',
+      sleepWell: 'Dormez bien',
+      defaultName: 'ami',
+      
+      // Reminder banner
+      timeToSleep: 'Il est l\'heure de dormir, {name}',
+      pastBedtimeBy: 'Heure du coucher dépassée de {time}',
+      alarm: 'Alarme',
+      
+      // Main actions
+      goingToSleep: 'Je vais dormir',
+      imAwake: 'Je suis réveillé',
+      howDoYouFeel: 'Comment vous sentez-vous ?',
+      refreshed: 'Reposé',
+      okay: 'Ça va',
+      tired: 'Fatigué',
+      
+      // Navigation
+      planner: 'Planificateur',
+      settings: 'Paramètres',
+      summary: 'Résumé',
+      
+      // Planner
+      sleepPlanner: 'Planificateur de sommeil',
+      planSleepCycles: 'Planifiez vos cycles de sommeil',
+      wantToWakeAt: 'Je veux me réveiller à',
+      wantToSleepAt: 'Je veux dormir à',
+      targetWakeTime: 'Heure de réveil cible',
+      targetSleepTime: 'Heure de coucher cible',
+      timeToFallAsleep: 'Temps pour s\'endormir',
+      suggestedTimes: 'Heures suggérées',
+      cycles: 'cycles',
+      clickToSetBedtime: 'Cliquez pour définir\ncomme heure de coucher',
+      reminderSet: 'Rappel défini !',
+      
+      // Settings
+      settingsTitle: 'Paramètres',
+      customizeExperience: 'Personnalisez votre expérience',
+      reminder: 'Rappel',
+      weekly: 'Hebdomadaire',
+      bedtimeReminder: 'Rappel de l\'heure du coucher',
+      targetBedtime: 'Heure de coucher cible',
+      gentleReminderHint: 'Vous recevrez un rappel doux après cette heure.',
+      gracePeriod: 'Période de grâce',
+      gracePeriodHint: 'Minutes après l\'heure du coucher avant le rappel.',
+      applyTo: 'Appliquer à',
+      everyDay: 'Tous les jours',
+      tomorrowOnly: 'Demain seulement',
+      saveSettings: 'Enregistrer',
+      saved: 'Enregistré !',
+      personalization: 'Personnalisation',
+      displayName: 'Nom d\'affichage',
+      changeName: 'Changer le nom',
+      
+      // Danger zone
+      deleteAllData: 'Supprimer toutes les données',
+      deleteHint: 'Ceci supprimera tous vos journaux de sommeil et réinitialisera les paramètres.',
+      deleteButton: 'Tout supprimer',
+      clickToConfirm: 'Cliquez à nouveau pour confirmer',
+      dataDeleted: 'Données supprimées',
+      
+      // Summary
+      sleepSummary: 'Résumé du sommeil',
+      lastNight: 'La nuit dernière',
+      sleepDuration: 'Durée du sommeil',
+      sleepInfo: 'Infos sommeil',
+      seeGraph: 'Voir le graphique',
+      wentToSleep: 'S\'est couché',
+      wokeUp: 'S\'est réveillé',
+      backToHome: 'Retour à l\'accueil',
+      noData: 'Pas de données',
+      
+      // Insights
+      insightMidCycle: "Vous vous êtes réveillé au milieu d'un cycle. Vous pouvez vous sentir fatigué.",
+      insightShort: "Un sommeil plus court peut affecter votre énergie.",
+      insightLong: "Dormir plus longtemps n'est pas toujours mieux. La qualité compte.",
+      insightTired: "Bon timing, mais la fatigue peut avoir d'autres causes.",
+      insightGood: "Vous vous êtes réveillé à la fin d'un cycle. C'est généralement mieux.",
+      
+      // Chart
+      mon: 'Lun', tue: 'Mar', wed: 'Mer', thu: 'Jeu', fri: 'Ven', sat: 'Sam', sun: 'Dim',
+      
+      // Planner Extras
+      minutes: 'min',
+      cycleExplanation: 'Un cycle de sommeil dure ~90 min. Se réveiller entre les cycles aide à se sentir reposé.',
+      
+      // Language
+      language: 'Langue',
+      
+      // Name input
+      welcomeTitle: 'Bienvenue !',
+      whatsYourName: 'Comment vous appelez-vous ?',
+      enterName: 'Entrez votre nom',
+      continueBtn: 'Continuer',
+      
+      // Footer
+      medicalDisclaimer: 'Cette extension ne fournit pas de conseils médicaux.',
+      madeBy: 'Développé par'
+    },
+    
+    zh: {
+      // Greetings
+      greetingMorning: '早上好，{name}',
+      greetingAfternoon: '下午好，{name}',
+      greetingEvening: '晚上好，{name}',
+      greetingNight: '晚安，{name}',
+      sleepWell: '睡个好觉',
+      defaultName: '朋友',
+      
+      // Reminder banner
+      timeToSleep: '该睡觉了，{name}',
+      pastBedtimeBy: '超过就寝时间 {time}',
+      alarm: '闹钟',
+      
+      // Main actions
+      goingToSleep: '我要睡觉了',
+      imAwake: '我醒了',
+      howDoYouFeel: '你感觉如何？',
+      refreshed: '精神焕发',
+      okay: '还可以',
+      tired: '累',
+      
+      // Navigation
+      planner: '计划',
+      settings: '设置',
+      summary: '摘要',
+      
+      // Planner
+      sleepPlanner: '睡眠计划',
+      planSleepCycles: '规划你的睡眠周期',
+      wantToWakeAt: '我想在...醒来',
+      wantToSleepAt: '我想在...睡觉',
+      targetWakeTime: '目标起床时间',
+      targetSleepTime: '目标就寝时间',
+      timeToFallAsleep: '入睡所需时间',
+      suggestedTimes: '建议时间',
+      cycles: '周期',
+      clickToSetBedtime: '点击设为\n就寝时间',
+      reminderSet: '提醒已设置！',
+      
+      // Settings
+      settingsTitle: '设置',
+      customizeExperience: '自定义体验',
+      reminder: '提醒',
+      weekly: '每周',
+      bedtimeReminder: '就寝提醒',
+      targetBedtime: '目标就寝时间',
+      gentleReminderHint: '过后你会收到温柔的提醒。',
+      gracePeriod: '宽限期',
+      gracePeriodHint: '就寝后多少分钟提醒。',
+      applyTo: '应用于',
+      everyDay: '每天',
+      tomorrowOnly: '仅明天',
+      saveSettings: '保存设置',
+      saved: '已保存！',
+      personalization: '个性化',
+      displayName: '显示名称',
+      changeName: '更改名称',
+      
+      // Danger zone
+      deleteAllData: '删除所有数据',
+      deleteHint: '这将删除所有睡眠记录并重置设置。',
+      deleteButton: '删除所有数据',
+      clickToConfirm: '再次点击确认',
+      dataDeleted: '数据已删除',
+      
+      // Summary
+      sleepSummary: '睡眠摘要',
+      lastNight: '昨晚',
+      sleepDuration: '睡眠时长',
+      sleepInfo: '睡眠信息',
+      seeGraph: '查看图表',
+      wentToSleep: '入睡',
+      wokeUp: '醒来',
+      backToHome: '返回主页',
+      noData: '无数据',
+      
+      // Insights
+      insightMidCycle: "你在周期中间醒来。可能会感到昏昏沉沉。",
+      insightShort: "睡眠时间较短可能会影响白天的状态。",
+      insightLong: "睡得越久不一定越好。质量也很重要。",
+      insightTired: "时机不错，但疲劳可能有其他原因。",
+      insightGood: "你在周期结束时醒来。通常感觉更好。",
+      
+      // Chart
+      mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六', sun: '日',
+      
+      // Planner Extras
+      minutes: '分钟',
+      cycleExplanation: '睡眠周期约为90分钟。在周期之间醒来有助于精神焕发。',
+      
+      // Language
+      language: '语言',
+      
+      // Name input
+      welcomeTitle: '欢迎！',
+      whatsYourName: '你叫什么名字？',
+      enterName: '输入你的名字',
+      continueBtn: '继续',
+      
+      // Footer
+      medicalDisclaimer: '此扩展不提供医疗建议。',
+      madeBy: '由...开发'
     }
   },
   
@@ -376,7 +586,9 @@ const i18n = {
     const names = {
       en: 'English',
       vi: 'Tiếng Việt',
-      jp: '日本語'
+      jp: '日本語',
+      fr: 'Français',
+      zh: '中文'
     };
     return names[lang] || lang;
   }
