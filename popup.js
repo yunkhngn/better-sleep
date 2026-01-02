@@ -9,6 +9,7 @@ let elements = {};
 // Current state
 let state = {
   isSleeping: false,
+  isNightMode: false,
   currentView: 'main',
   plannerMode: 'wake',
   settingsTab: 'reminder',
@@ -23,9 +24,11 @@ async function init() {
   await loadState();
   setupEventListeners();
   startClock();
+  updateTimeOfDay();
   await updateUI();
   await loadSettings();
   await showTipIfAvailable();
+  generateStars();
 }
 
 /**
@@ -33,15 +36,25 @@ async function init() {
  */
 function cacheElements() {
   elements = {
-    // Main panel
+    // Panels
+    dayPanel: document.getElementById('dayPanel'),
+    nightPanel: document.getElementById('nightPanel'),
+    actionPanel: document.getElementById('actionPanel'),
+    
+    // Time displays
     currentTime: document.getElementById('currentTime'),
-    dayNightIcon: document.getElementById('dayNightIcon'),
+    dateText: document.getElementById('dateText'),
+    alarmTime: document.getElementById('alarmTime'),
+    
+    // Primary action
     primaryAction: document.getElementById('primaryAction'),
     primaryActionText: document.getElementById('primaryActionText'),
+    primaryActionIcon: document.getElementById('primaryActionIcon'),
     
     // Quick actions
     openPlanner: document.getElementById('openPlanner'),
     openSettings: document.getElementById('openSettings'),
+    openSummary: document.getElementById('openSummary'),
     
     // Mood selector
     moodSelector: document.getElementById('moodSelector'),
@@ -50,8 +63,11 @@ function cacheElements() {
     // Views
     plannerView: document.getElementById('plannerView'),
     settingsView: document.getElementById('settingsView'),
+    summaryView: document.getElementById('summaryView'),
     closePlanner: document.getElementById('closePlanner'),
     closeSettings: document.getElementById('closeSettings'),
+    closeSummary: document.getElementById('closeSummary'),
+    backToHome: document.getElementById('backToHome'),
     
     // Planner
     plannerTabs: document.querySelectorAll('.planner-tab'),
@@ -63,7 +79,6 @@ function cacheElements() {
     // Settings tabs
     navTabs: document.querySelectorAll('.nav-tab'),
     reminderTab: document.getElementById('reminderTab'),
-    summaryTab: document.getElementById('summaryTab'),
     weeklyTab: document.getElementById('weeklyTab'),
     
     // Settings controls
@@ -75,7 +90,14 @@ function cacheElements() {
     saveSettings: document.getElementById('saveSettings'),
     
     // Summary
-    summaryContent: document.getElementById('summaryContent'),
+    cycleCount: document.getElementById('cycleCount'),
+    cycleProgress: document.getElementById('cycleProgress'),
+    sleepDuration: document.getElementById('sleepDuration'),
+    sleepTimeValue: document.getElementById('sleepTimeValue'),
+    wakeTimeValue: document.getElementById('wakeTimeValue'),
+    insightText: document.getElementById('insightText'),
+    summaryInsight: document.getElementById('summaryInsight'),
+    seeGraphLink: document.getElementById('seeGraphLink'),
     
     // Weekly chart
     weeklyChart: document.getElementById('weeklyChart'),
@@ -83,8 +105,27 @@ function cacheElements() {
     
     // Tip
     tipBanner: document.getElementById('tipBanner'),
-    tipText: document.getElementById('tipText')
+    tipText: document.getElementById('tipText'),
+    
+    // Stars container
+    starsContainer: document.getElementById('starsContainer')
   };
+}
+
+/**
+ * Generate stars for night mode
+ */
+function generateStars() {
+  if (!elements.starsContainer) return;
+  
+  for (let i = 0; i < 20; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.animationDelay = `${Math.random() * 3}s`;
+    elements.starsContainer.appendChild(star);
+  }
 }
 
 /**
@@ -109,8 +150,19 @@ function setupEventListeners() {
   // View navigation
   elements.openPlanner.addEventListener('click', () => showView('planner'));
   elements.openSettings.addEventListener('click', () => showView('settings'));
-  elements.closePlanner.addEventListener('click', () => hideView('planner'));
-  elements.closeSettings.addEventListener('click', () => hideView('settings'));
+  elements.openSummary.addEventListener('click', () => showView('summary'));
+  elements.closePlanner.addEventListener('click', () => hideAllViews());
+  elements.closeSettings.addEventListener('click', () => hideAllViews());
+  elements.closeSummary.addEventListener('click', () => hideAllViews());
+  elements.backToHome.addEventListener('click', () => hideAllViews());
+  
+  // See Graph link
+  elements.seeGraphLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    hideAllViews();
+    showView('settings');
+    switchSettingsTab('weekly');
+  });
   
   // Planner tabs
   elements.plannerTabs.forEach(tab => {
@@ -157,30 +209,35 @@ function updateClock() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
-  elements.currentTime.textContent = `${hours}:${minutes}`;
   
-  // Update day/night icon
-  const hour = now.getHours();
+  if (elements.currentTime) {
+    elements.currentTime.textContent = `${hours}:${minutes}`;
+  }
+  
+  // Update date text
+  if (elements.dateText) {
+    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+    elements.dateText.textContent = now.toLocaleDateString('en-US', options);
+  }
+}
+
+/**
+ * Update time of day (day/night mode)
+ */
+function updateTimeOfDay() {
+  const hour = new Date().getHours();
   const isNight = hour >= 20 || hour < 6;
   
+  state.isNightMode = isNight;
+  
   if (isNight) {
-    // Moon icon
-    elements.dayNightIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-    elements.dayNightIcon.classList.remove('sun');
+    elements.dayPanel.classList.add('hidden');
+    elements.nightPanel.classList.remove('hidden');
+    elements.actionPanel.classList.add('light-mode');
   } else {
-    // Sun icon
-    elements.dayNightIcon.innerHTML = `
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/>
-      <line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/>
-      <line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    `;
-    elements.dayNightIcon.classList.add('sun');
+    elements.dayPanel.classList.remove('hidden');
+    elements.nightPanel.classList.add('hidden');
+    elements.actionPanel.classList.remove('light-mode');
   }
 }
 
@@ -188,32 +245,23 @@ function updateClock() {
  * Update UI based on current state
  */
 async function updateUI() {
-  const primaryIcon = elements.primaryAction.querySelector('.icon');
+  const moonSVG = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  const sunSVG = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>';
   
   if (state.isSleeping) {
     elements.primaryActionText.textContent = "I'm awake";
-    primaryIcon.innerHTML = `
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/>
-      <line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/>
-      <line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    `;
+    elements.primaryActionIcon.innerHTML = sunSVG;
+    elements.primaryAction.classList.remove('primary');
   } else {
     elements.primaryActionText.textContent = "Going to sleep";
-    primaryIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    elements.primaryActionIcon.innerHTML = moonSVG;
+    elements.primaryAction.classList.add('primary');
   }
   
-  // Update reminder indicator
-  const reminderState = await Storage.get('reminderState');
-  if (reminderState && reminderState.enabled) {
-    elements.openSettings.classList.add('active');
-  } else {
-    elements.openSettings.classList.remove('active');
+  // Update alarm time from schedule
+  const schedule = await Storage.getEffectiveSchedule();
+  if (elements.alarmTime && schedule.wakeTime) {
+    elements.alarmTime.textContent = schedule.wakeTime;
   }
 }
 
@@ -224,14 +272,23 @@ async function handlePrimaryAction() {
   if (state.isSleeping) {
     // Show mood selector
     elements.moodSelector.classList.remove('hidden');
+    elements.actionPanel.classList.add('hidden');
   } else {
     // Start sleep
     await Storage.startSleep();
     state.isSleeping = true;
     await updateUI();
     
+    // Switch to night mode
+    elements.dayPanel.classList.add('hidden');
+    elements.nightPanel.classList.remove('hidden');
+    
     // Notify background to clear badge
-    chrome.runtime.sendMessage({ action: 'sleepStarted' });
+    try {
+      chrome.runtime.sendMessage({ action: 'sleepStarted' });
+    } catch (e) {
+      console.log('Running outside extension context');
+    }
   }
 }
 
@@ -244,20 +301,23 @@ async function handleMoodSelect(mood) {
   document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
   
   // Save sleep log with mood
-  await Storage.endSleep(mood);
+  const logEntry = await Storage.endSleep(mood);
   state.isSleeping = false;
   
-  // Hide mood selector after short delay
+  // Hide mood selector
   setTimeout(() => {
     elements.moodSelector.classList.add('hidden');
+    elements.actionPanel.classList.remove('hidden');
     elements.moodBtns.forEach(btn => btn.classList.remove('selected'));
   }, 300);
   
   await updateUI();
+  updateTimeOfDay();
   
-  // Update summary if visible
-  if (state.settingsTab === 'summary') {
-    await loadSummary();
+  // Show summary if we have data
+  if (logEntry) {
+    showView('summary');
+    loadSummaryData(logEntry);
   }
 }
 
@@ -265,31 +325,48 @@ async function handleMoodSelect(mood) {
  * Show a view
  */
 function showView(view) {
+  hideAllViews();
+  
+  // Hide main panels
+  elements.dayPanel.classList.add('hidden');
+  elements.nightPanel.classList.add('hidden');
+  elements.actionPanel.classList.add('hidden');
+  elements.moodSelector.classList.add('hidden');
+  
   if (view === 'planner') {
     elements.plannerView.classList.add('active');
-    elements.settingsView.classList.remove('active');
     updateSuggestions();
   } else if (view === 'settings') {
     elements.settingsView.classList.add('active');
-    elements.plannerView.classList.remove('active');
-    
-    // Initialize chart if on weekly tab
     if (state.settingsTab === 'weekly') {
       initChart();
     }
+  } else if (view === 'summary') {
+    elements.summaryView.classList.add('active');
+    loadSummary();
   }
+  
   state.currentView = view;
 }
 
 /**
- * Hide a view
+ * Hide all views
  */
-function hideView(view) {
-  if (view === 'planner') {
-    elements.plannerView.classList.remove('active');
-  } else if (view === 'settings') {
-    elements.settingsView.classList.remove('active');
+function hideAllViews() {
+  elements.plannerView.classList.remove('active');
+  elements.settingsView.classList.remove('active');
+  elements.summaryView.classList.remove('active');
+  
+  // Show main panels
+  if (state.isNightMode || state.isSleeping) {
+    elements.nightPanel.classList.remove('hidden');
+    elements.dayPanel.classList.add('hidden');
+  } else {
+    elements.dayPanel.classList.remove('hidden');
+    elements.nightPanel.classList.add('hidden');
   }
+  elements.actionPanel.classList.remove('hidden');
+  
   state.currentView = 'main';
 }
 
@@ -324,12 +401,10 @@ function updateSuggestions() {
     suggestions = Planner.calculateWakeTimes(time, latency);
   }
   
-  const label = state.plannerMode === 'wake' ? 'Go to bed at' : 'Wake up at';
-  
   elements.suggestionsList.innerHTML = suggestions.map(s => `
     <div class="suggestion-item">
       <span class="suggestion-time">${s.time}</span>
-      <span class="suggestion-cycles">${s.cycles} cycles · ${s.duration}</span>
+      <span class="suggestion-cycles">${s.cycles} cycles<br>${s.duration}</span>
     </div>
   `).join('');
 }
@@ -351,9 +426,6 @@ function switchSettingsTab(tab) {
   
   if (tab === 'reminder') {
     elements.reminderTab.classList.add('active');
-  } else if (tab === 'summary') {
-    elements.summaryTab.classList.add('active');
-    loadSummary();
   } else if (tab === 'weekly') {
     elements.weeklyTab.classList.add('active');
     initChart();
@@ -400,13 +472,17 @@ async function saveSettings() {
   });
   
   // Notify background to update alarms
-  chrome.runtime.sendMessage({ action: 'settingsUpdated' });
+  try {
+    chrome.runtime.sendMessage({ action: 'settingsUpdated' });
+  } catch (e) {
+    console.log('Running outside extension context');
+  }
   
   // Visual feedback
   const btn = elements.saveSettings;
   const originalText = btn.textContent;
   btn.textContent = 'Saved!';
-  btn.style.background = 'var(--mood-refreshed)';
+  btn.style.background = 'var(--accent-teal)';
   
   setTimeout(() => {
     btn.textContent = originalText;
@@ -421,10 +497,41 @@ async function loadSummary() {
   const lastLog = await Storage.getLastLog();
   
   if (lastLog) {
-    const summary = Summary.generateSummary(lastLog);
-    elements.summaryContent.innerHTML = Summary.generateSummaryHTML(summary);
+    loadSummaryData(lastLog);
   } else {
-    elements.summaryContent.innerHTML = '<p class="text-muted" style="text-align: center;">No sleep data yet. Start by logging your sleep!</p>';
+    elements.cycleCount.textContent = '-';
+    elements.sleepDuration.textContent = 'No data';
+    elements.sleepTimeValue.textContent = '--:--';
+    elements.wakeTimeValue.textContent = '--:--';
+    elements.summaryInsight.classList.add('hidden');
+  }
+}
+
+/**
+ * Load summary data from a log entry
+ */
+function loadSummaryData(logEntry) {
+  const summary = Summary.generateSummary(logEntry);
+  
+  if (summary) {
+    elements.cycleCount.textContent = summary.completeCycles;
+    elements.sleepDuration.textContent = summary.duration;
+    elements.sleepTimeValue.textContent = summary.sleepTime;
+    elements.wakeTimeValue.textContent = summary.wakeTime;
+    
+    // Update circle progress
+    const cycles = Math.min(summary.completeCycles, 6);
+    const circumference = 2 * Math.PI * 60;
+    const offset = circumference - (cycles / 6) * circumference;
+    elements.cycleProgress.style.strokeDashoffset = offset;
+    
+    // Update insight
+    if (summary.insight) {
+      elements.insightText.textContent = summary.insight;
+      elements.summaryInsight.classList.remove('hidden');
+    } else {
+      elements.summaryInsight.classList.add('hidden');
+    }
   }
 }
 

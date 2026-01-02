@@ -7,163 +7,327 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-container">
-    <!-- Main Horizontal Panel -->
-    <div class="main-panel">
-      <!-- Left Zone: Time Display -->
-      <div class="zone-left">
-        <div class="time-display" id="currentTime">--:--</div>
-        <svg class="day-night-icon" id="dayNightIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <!-- Moon icon (default, will be swapped by JS) -->
+  <div class="app-container" id="app">
+    <!-- Day State: Light Theme -->
+    <div class="main-panel" id="dayPanel">
+      <!-- Header -->
+      <div class="panel-header">
+        <div class="greeting-section">
+          <span class="date-text" id="dateText">January 3, 2026</span>
+          <h1 class="greeting-text">Good morning</h1>
+        </div>
+      </div>
+
+      <!-- Sun Display -->
+      <div class="celestial-display">
+        <div class="sun-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Night State: Dark Theme -->
+    <div class="main-panel night-mode hidden" id="nightPanel">
+      <!-- Stars decoration -->
+      <div class="stars-decoration" id="starsContainer"></div>
+      
+      <!-- Header -->
+      <div class="panel-header">
+        <div class="greeting-section">
+          <span class="date-text">Good night</span>
+          <h1 class="greeting-text" style="color: var(--dark-text)">Sleep well</h1>
+        </div>
+      </div>
+
+      <!-- Moon Display -->
+      <div class="celestial-display">
+        <div class="moon-icon"></div>
+        <div class="time-display-large" id="currentTime">23:00</div>
+        <div class="alarm-info">
+          <svg class="alarm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="13" r="8"/>
+            <path d="M12 9v4l2 2"/>
+            <path d="M5 3L2 6"/>
+            <path d="M22 6l-3-3"/>
+          </svg>
+          <span>Alarm <span id="alarmTime">07:00</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Panel -->
+    <div class="action-panel" id="actionPanel">
+      <button class="btn-action primary" id="primaryAction">
+        <svg class="action-btn-icon" id="primaryActionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
-      </div>
+        <span id="primaryActionText">Going to sleep</span>
+      </button>
 
-      <!-- Center Zone: Primary Action -->
-      <div class="zone-center">
-        <button class="btn-primary" id="primaryAction">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-          <span id="primaryActionText">Going to sleep</span>
-        </button>
-      </div>
-
-      <!-- Right Zone: Quick Actions -->
-      <div class="zone-right">
-        <button class="btn-icon" id="openPlanner" title="Sleep Planner">
+      <div class="quick-actions">
+        <button class="btn-icon" id="openPlanner">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
+          <span>Planner</span>
         </button>
-        <button class="btn-icon reminder-indicator" id="openSettings" title="Settings">
+        <button class="btn-icon" id="openSettings">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
+          <span>Settings</span>
+        </button>
+        <button class="btn-icon" id="openSummary">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"/>
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+          </svg>
+          <span>Summary</span>
         </button>
       </div>
     </div>
 
-    <!-- Mood Selector (shown after waking) -->
+    <!-- Mood Selector -->
     <div class="mood-selector hidden" id="moodSelector">
       <span class="mood-label">How do you feel?</span>
       <button class="mood-btn refreshed" data-mood="refreshed">
-        <span class="mood-emoji">😊</span>
+        <svg class="mood-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
         <span class="mood-text">Refreshed</span>
       </button>
       <button class="mood-btn okay" data-mood="okay">
-        <span class="mood-emoji">😐</span>
+        <svg class="mood-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="8" y1="15" x2="16" y2="15"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
         <span class="mood-text">Okay</span>
       </button>
       <button class="mood-btn tired" data-mood="tired">
-        <span class="mood-emoji">😴</span>
+        <svg class="mood-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
         <span class="mood-text">Tired</span>
       </button>
     </div>
 
     <!-- Sleep Planner View -->
     <div class="view" id="plannerView">
-      <div class="view-header">
-        <h2 class="view-title">Sleep Planner</h2>
-        <button class="btn-close" id="closePlanner">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
+      <div class="view-header-dark">
+        <div class="stars-decoration"></div>
+        <div class="view-title-row">
+          <div>
+            <h2 class="view-title">Sleep Planner</h2>
+            <p class="view-subtitle">Plan your sleep cycles</p>
+          </div>
+          <button class="btn-close" id="closePlanner">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="planner-tabs">
-        <button class="planner-tab active" data-mode="wake">I want to wake at</button>
-        <button class="planner-tab" data-mode="sleep">I want to sleep at</button>
-      </div>
+      <div class="view-body">
+        <div class="planner-tabs">
+          <button class="planner-tab active" data-mode="wake">I want to wake at</button>
+          <button class="planner-tab" data-mode="sleep">I want to sleep at</button>
+        </div>
 
-      <div class="planner-input-group">
-        <label class="planner-label" id="plannerInputLabel">Target wake time</label>
-        <input type="time" class="planner-input" id="plannerTimeInput" value="07:00">
-      </div>
+        <div class="planner-input-group">
+          <label class="planner-label" id="plannerInputLabel">Target wake time</label>
+          <input type="time" class="planner-input" id="plannerTimeInput" value="07:00">
+        </div>
 
-      <div class="latency-row">
-        <span class="latency-label">Time to fall asleep:</span>
-        <input type="number" class="latency-input" id="latencyInput" value="15" min="0" max="60">
-        <span class="latency-label">min</span>
-      </div>
+        <div class="latency-row">
+          <span class="latency-label">Time to fall asleep</span>
+          <input type="number" class="latency-input" id="latencyInput" value="15" min="0" max="60">
+          <span class="latency-label">min</span>
+        </div>
 
-      <div class="suggestions-title">Suggested times</div>
-      <div class="suggestions-list" id="suggestionsList">
-        <!-- Suggestions will be inserted here -->
+        <div class="suggestions-title">Suggested times</div>
+        <div class="suggestions-list" id="suggestionsList"></div>
       </div>
     </div>
 
     <!-- Settings View -->
     <div class="view" id="settingsView">
-      <div class="view-header">
-        <h2 class="view-title">Settings</h2>
-        <button class="btn-close" id="closeSettings">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
+      <div class="view-header-dark">
+        <div class="view-title-row">
+          <div>
+            <h2 class="view-title">Settings</h2>
+            <p class="view-subtitle">Customize your experience</p>
+          </div>
+          <button class="btn-close" id="closeSettings">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="view-body">
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-tab="reminder">Reminder</button>
+          <button class="nav-tab" data-tab="weekly">Weekly</button>
+        </div>
+
+        <!-- Reminder Tab -->
+        <div class="settings-tab active" id="reminderTab">
+          <div class="settings-section">
+            <div class="toggle-row">
+              <span class="toggle-label">Bedtime reminder</span>
+              <label class="toggle">
+                <input type="checkbox" id="reminderEnabled">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section" id="reminderSettings">
+            <label class="settings-label">Target bedtime</label>
+            <input type="time" class="settings-input" id="targetBedtime" value="22:30">
+            <p class="settings-hint">You'll get a gentle reminder after this time.</p>
+          </div>
+
+          <div class="settings-section">
+            <label class="settings-label">Grace period</label>
+            <input type="number" class="settings-input" id="graceMinutes" value="15" min="0" max="60" style="width: 100px;">
+            <p class="settings-hint">Minutes after bedtime before reminder.</p>
+          </div>
+
+          <div class="settings-section">
+            <label class="settings-label">Apply to</label>
+            <div class="scope-selector">
+              <button class="scope-btn active" data-scope="everyday">Every day</button>
+              <button class="scope-btn" data-scope="tomorrow">Tomorrow only</button>
+            </div>
+          </div>
+
+          <button class="btn-save" id="saveSettings">Save Settings</button>
+        </div>
+
+        <!-- Weekly Tab -->
+        <div class="settings-tab" id="weeklyTab">
+          <div class="chart-container">
+            <canvas class="chart-canvas" id="weeklyChart"></canvas>
+            <div class="chart-tooltip" id="chartTooltip"></div>
+          </div>
+          <p class="chart-disclaimer">Based on logged times only.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary View -->
+    <div class="view" id="summaryView">
+      <div class="view-header-dark">
+        <div class="view-title-row">
+          <div>
+            <h2 class="view-title">Sleep Summary</h2>
+            <p class="view-subtitle" id="summaryDate">Last night</p>
+          </div>
+          <button class="btn-close" id="closeSummary">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Circle Progress -->
+        <div class="summary-circle">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle class="summary-circle-bg" cx="70" cy="70" r="60"/>
+            <circle class="summary-circle-progress" id="cycleProgress" cx="70" cy="70" r="60"/>
           </svg>
-        </button>
-      </div>
-
-      <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="reminder">Reminder</button>
-        <button class="nav-tab" data-tab="summary">Summary</button>
-        <button class="nav-tab" data-tab="weekly">Weekly</button>
-      </div>
-
-      <!-- Reminder Tab -->
-      <div class="settings-tab active" id="reminderTab">
-        <div class="settings-section">
-          <div class="toggle-row">
-            <span class="toggle-label">Bedtime reminder</span>
-            <label class="toggle">
-              <input type="checkbox" id="reminderEnabled">
-              <span class="toggle-slider"></span>
-            </label>
+          <div class="summary-circle-content">
+            <div class="summary-circle-value" id="cycleCount">5</div>
+            <div class="summary-circle-label">cycles</div>
           </div>
         </div>
 
-        <div class="settings-section" id="reminderSettings">
-          <label class="settings-label">Target bedtime</label>
-          <input type="time" class="settings-input" id="targetBedtime" value="22:30">
-          <p class="settings-hint">You'll get a gentle reminder if it's past this time.</p>
+        <div class="summary-stats">
+          <div class="summary-duration" id="sleepDuration">7h 50m</div>
+          <div class="summary-label">Sleep Duration</div>
         </div>
+      </div>
 
-        <div class="settings-section">
-          <label class="settings-label">Grace period (minutes)</label>
-          <input type="number" class="settings-input" id="graceMinutes" value="15" min="0" max="60" style="width: 100px;">
-          <p class="settings-hint">Reminder shows after bedtime + grace period.</p>
-        </div>
-
-        <div class="settings-section">
-          <label class="settings-label">Apply to</label>
-          <div class="scope-selector">
-            <button class="scope-btn active" data-scope="everyday">Every day</button>
-            <button class="scope-btn" data-scope="tomorrow">Tomorrow only</button>
+      <div class="view-body">
+        <!-- Sleep Info Card -->
+        <div class="info-card" style="margin-top: -20px; position: relative; z-index: 1;">
+          <div class="info-card-header">
+            <span class="info-card-title">Sleep Information</span>
+            <a href="#" class="info-card-link" id="seeGraphLink">
+              See Graph
+              <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+              </svg>
+            </a>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </div>
+              <div class="info-content">
+                <span class="info-value" id="sleepTimeValue">23:00</span>
+                <span class="info-label">Went to sleep</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon sun">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="5"/>
+                  <line x1="12" y1="1" x2="12" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="23"/>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                  <line x1="1" y1="12" x2="3" y2="12"/>
+                  <line x1="21" y1="12" x2="23" y2="12"/>
+                </svg>
+              </div>
+              <div class="info-content">
+                <span class="info-value" id="wakeTimeValue">06:50</span>
+                <span class="info-label">Woke up</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="summary-insight" id="summaryInsight" style="margin-top: 16px;">
+            <svg class="insight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+              <polyline points="17 6 23 6 23 12"/>
+            </svg>
+            <span class="summary-insight-text" id="insightText">You woke up near the end of a cycle. This usually feels better.</span>
           </div>
         </div>
 
-        <button class="btn-save" id="saveSettings">Save Settings</button>
-      </div>
-
-      <!-- Summary Tab -->
-      <div class="settings-tab" id="summaryTab">
-        <div id="summaryContent">
-          <p class="text-muted" style="text-align: center;">No sleep data yet. Start by logging your sleep!</p>
-        </div>
-      </div>
-
-      <!-- Weekly Tab -->
-      <div class="settings-tab" id="weeklyTab">
-        <div class="chart-container">
-          <canvas class="chart-canvas" id="weeklyChart"></canvas>
-          <div class="chart-tooltip" id="chartTooltip"></div>
-        </div>
-        <p class="chart-disclaimer">Based on logged times only.</p>
+        <button class="btn-save" id="backToHome" style="margin-top: 16px;">Back to Home</button>
       </div>
     </div>
 
