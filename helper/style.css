@@ -97,32 +97,41 @@ body {
 /* App Showcase */
 .app-showcase {
     margin-top: 60px;
+    width: 100%;
+}
+
+.screenshot-scroll {
     display: flex;
-    justify-content: center;
-    perspective: 1000px;
+    gap: 30px;
+    overflow-x: auto;
+    padding: 20px 20px 40px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
-.app-frame {
-    position: relative;
-    border-radius: 16px;
+.screenshot-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.screenshot-scroll img {
+    height: 400px;
+    width: auto;
+    border-radius: 12px;
     box-shadow:
-        0 20px 50px -12px rgba(0, 0, 0, 0.7),
+        0 20px 50px -12px rgba(0, 0, 0, 0.5),
         0 0 0 1px rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    line-height: 0;
-    max-width: 380px;
-    width: 100%;
-    transition: transform 0.4s ease;
+    scroll-snap-align: center;
+    transition: transform 0.3s ease;
 }
 
-.app-frame:hover {
-    transform: translateY(-5px) rotateX(2deg);
-}
-
-.app-frame img {
-    width: 100%;
-    height: auto;
-    display: block;
+.screenshot-scroll img:hover {
+    transform: translateY(-10px) scale(1.02);
+    z-index: 10;
 }
 
 /* Sections */
