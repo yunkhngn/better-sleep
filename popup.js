@@ -88,6 +88,7 @@ function cacheElements() {
     graceMinutes: document.getElementById('graceMinutes'),
     scopeBtns: document.querySelectorAll('.scope-btn'),
     saveSettings: document.getElementById('saveSettings'),
+    deleteAllData: document.getElementById('deleteAllData'),
     
     // Summary
     cycleCount: document.getElementById('cycleCount'),
@@ -192,6 +193,9 @@ function setupEventListeners() {
   
   // Save settings
   elements.saveSettings.addEventListener('click', saveSettings);
+  
+  // Delete all data
+  elements.deleteAllData.addEventListener('click', handleDeleteAllData);
 }
 
 /**
@@ -552,6 +556,61 @@ async function showTipIfAvailable() {
   if (tip) {
     elements.tipText.textContent = tip;
     elements.tipBanner.classList.remove('hidden');
+  }
+}
+
+/**
+ * Handle delete all data
+ */
+async function handleDeleteAllData() {
+  const btn = elements.deleteAllData;
+  
+  // First click - show confirmation
+  if (!btn.dataset.confirm) {
+    btn.dataset.confirm = 'true';
+    btn.textContent = 'Click again to confirm';
+    btn.style.background = '#fef2f2';
+    btn.style.borderColor = '#dc2626';
+    
+    // Reset after 3 seconds
+    setTimeout(() => {
+      if (btn.dataset.confirm) {
+        delete btn.dataset.confirm;
+        btn.textContent = 'Delete All Data';
+        btn.style.background = '';
+        btn.style.borderColor = '';
+      }
+    }, 3000);
+    return;
+  }
+  
+  // Second click - delete
+  delete btn.dataset.confirm;
+  
+  try {
+    await Storage.clearAll();
+    
+    // Visual feedback
+    btn.textContent = 'Data deleted';
+    btn.style.color = 'var(--accent-teal)';
+    btn.style.borderColor = 'var(--accent-teal)';
+    btn.style.background = '';
+    
+    // Reset state
+    state.isSleeping = false;
+    await updateUI();
+    await loadSettings();
+    
+    setTimeout(() => {
+      btn.textContent = 'Delete All Data';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  } catch (e) {
+    console.log('Running outside extension context');
+    btn.textContent = 'Delete All Data';
+    btn.style.background = '';
+    btn.style.borderColor = '';
   }
 }
 

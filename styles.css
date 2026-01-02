@@ -8,9 +8,10 @@
 
 /* CSS Variables */
 :root {
-  /* Dark theme colors (night state) */
-  --dark-bg: #0f172a;
-  --dark-bg-secondary: #1e293b;
+  /* Dark theme colors (night state) - Gradient: #0F2027 → #203A43 → #2C5364 */
+  --dark-bg: #0F2027;
+  --dark-bg-mid: #203A43;
+  --dark-bg-secondary: #2C5364;
   --dark-accent: #3b82f6;
   --dark-text: #f8fafc;
   --dark-text-secondary: #94a3b8;
@@ -116,7 +117,7 @@ body {
 }
 
 .main-panel.night-mode {
-  background: var(--dark-bg);
+  background: linear-gradient(180deg, var(--dark-bg) 0%, var(--dark-bg-mid) 50%, var(--dark-bg-secondary) 100%);
   color: var(--dark-text);
 }
 
@@ -288,7 +289,7 @@ body {
    Action Panel - Dark Theme
    ======================================== */
 .action-panel {
-  background: var(--dark-bg);
+  background: linear-gradient(180deg, var(--dark-bg-secondary) 0%, var(--dark-bg-mid) 100%);
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
   padding: var(--space-6);
   margin-top: auto;
@@ -606,7 +607,7 @@ body {
 
 /* Dark header for views */
 .view-header-dark {
-  background: var(--dark-bg);
+  background: linear-gradient(180deg, var(--dark-bg) 0%, var(--dark-bg-mid) 50%, var(--dark-bg-secondary) 100%);
   padding: var(--space-5);
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   position: relative;
