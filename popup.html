@@ -227,6 +227,22 @@
           </div>
 
           <button class="btn-save" id="saveSettings">Save Settings</button>
+
+          <!-- Danger Zone -->
+          <div class="danger-zone">
+            <div class="danger-header">
+              <svg class="danger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
+              <span>Delete all data</span>
+            </div>
+            <p class="danger-hint">This will remove all your sleep logs and reset settings.</p>
+            <button class="btn-danger" id="deleteAllData">Delete All Data</button>
+          </div>
         </div>
 
         <!-- Weekly Tab -->

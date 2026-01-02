@@ -1079,6 +1079,53 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* Danger Zone */
+.danger-zone {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid #e2e8f0;
+}
+
+.danger-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: var(--space-2);
+}
+
+.danger-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.danger-hint {
+  font-size: var(--font-size-xs);
+  color: var(--light-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.btn-danger {
+  width: 100%;
+  padding: var(--space-3);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: #dc2626;
+  background: transparent;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-danger:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
 /* ========================================
    Weekly Chart View
    ======================================== */

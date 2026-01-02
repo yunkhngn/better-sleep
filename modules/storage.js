@@ -205,5 +205,16 @@ const Storage = {
     const lastTipDate = await this.get('lastTipDate');
     const today = new Date().toISOString().split('T')[0];
     return lastTipDate === today;
+  },
+
+  /**
+   * Clear all data and reset to defaults
+   */
+  async clearAll() {
+    return new Promise((resolve) => {
+      chrome.storage.local.clear(() => {
+        chrome.storage.local.set(this.defaults, resolve);
+      });
+    });
   }
 };
