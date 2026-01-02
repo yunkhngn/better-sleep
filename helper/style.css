@@ -67,6 +67,7 @@ body {
     margin-bottom: 20px;
     background: linear-gradient(to right, #fff, #9ca3af);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -91,6 +92,37 @@ body {
 .cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(45, 212, 191, 0.3);
+}
+
+/* App Showcase */
+.app-showcase {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    perspective: 1000px;
+}
+
+.app-frame {
+    position: relative;
+    border-radius: 16px;
+    box-shadow:
+        0 20px 50px -12px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    line-height: 0;
+    max-width: 380px;
+    width: 100%;
+    transition: transform 0.4s ease;
+}
+
+.app-frame:hover {
+    transform: translateY(-5px) rotateX(2deg);
+}
+
+.app-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Sections */
