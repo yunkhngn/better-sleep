@@ -117,7 +117,7 @@ const i18n = {
       
       // Footer
       medicalDisclaimer: 'This extension does not provide medical advice.',
-      madeBy: 'Made by'
+      madeBy: 'Developed by'
     },
     
     vi: {
@@ -224,7 +224,7 @@ const i18n = {
       
       // Footer
       medicalDisclaimer: 'Extension này không cung cấp lời khuyên y tế.',
-      madeBy: 'Được tạo bởi'
+      madeBy: 'Phát triển bởi'
     },
     
     jp: {

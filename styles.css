@@ -1481,6 +1481,24 @@ body {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.suggestion-item.suggestion-now {
+  background: rgba(45, 212, 191, 0.15);
+  border: 1px solid var(--accent-teal);
+  order: -1;
+}
+
+.suggestion-item.suggestion-now .suggestion-time {
+  color: var(--accent-teal);
+  font-size: 1.1em;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 20px;
+  grid-column: 1 / -1;
+}
+
 .suggestion-item.confirmed {
   background: var(--accent-teal);
 }

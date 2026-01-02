@@ -534,15 +534,65 @@ async function updateSuggestions() {
   const minute = elements.plannerMinute.value;
   const time = `${hour}:${minute}`;
   
-  const suggestions = Planner.calculateSuggestions(time, mode, schedule.sleepLatency);
+  let suggestions = Planner.calculateSuggestions(time, mode, schedule.sleepLatency);
   
+  // Filter and enhance suggestions for 'wake' mode
+  if (mode === 'wake') {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    // 1. Filter out past bedtimes (buffer 10 mins)
+    suggestions = suggestions.filter(s => {
+      const sMin = Planner.timeToMinutes(s.time);
+      // Heuristic: If time is > current + 12h, it's likely previous day (invalid for next sleep).
+      // If time is < current - 10m, it's passed.
+      // But we need to handle midnight crossing.
+      
+      // Assume wake target matches suggestions date context.
+      // E.g. Wake 07:00. Suggestion 22:00.
+      // If Now 23:00. 22:00 is past.
+      // If Now 9:00. 22:00 is future.
+      
+      // Simple logic: Close gap distance.
+      let diff = sMin - currentMinutes;
+      if (diff < -720) diff += 1440; // Wrap around next day
+      if (diff > 720) diff -= 1440; // Wrap around prev day
+      
+      return diff >= -15; // Keep if in future or just passed (15m buffer)
+    });
+    
+    // 2. Add "Sleep Now" option if valuable
+    const targetWakeMinutes = Planner.timeToMinutes(time);
+    let diffToWake = targetWakeMinutes - currentMinutes;
+    if (diffToWake < 0) diffToWake += 1440;
+    
+    const sleepDurationAvailable = diffToWake - schedule.sleepLatency;
+    const cyclesAvailable = sleepDurationAvailable / 90;
+    
+    if (cyclesAvailable >= 1) { // Minimum 1 cycle
+       const nowTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+       suggestions.unshift({
+         time: "NOW",
+         cycles: Number(cyclesAvailable.toFixed(1)),
+         duration: Planner.formatDuration(sleepDurationAvailable),
+         isNow: true
+       });
+    }
+  }
+
   // Clear list
   elements.suggestionsList.innerHTML = '';
   
-  if (!suggestions || suggestions.length === 0) return;
+  if (!suggestions || suggestions.length === 0) {
+     elements.suggestionsList.innerHTML = '<div class="empty-state">No suitable times found</div>';
+     return;
+  }
 
   elements.suggestionsList.innerHTML = suggestions.map(s => `
-    <div class="suggestion-item" data-time="${s.time}" data-wake="${time}">
+    <div class="suggestion-item ${s.isNow ? 'suggestion-now' : ''}" data-time="${s.time === 'NOW' ? (() => {
+       const d = new Date();
+       return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    })() : s.time}" data-wake="${time}">
       <span class="suggestion-time">${s.time}</span>
       <span class="suggestion-cycles">${s.cycles} cycles<br>${s.duration}</span>
     </div>
