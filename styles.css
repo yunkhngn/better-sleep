@@ -1606,11 +1606,11 @@ body {
 }
 
 .settings-label {
+  margin-top: var(--space-5);
   display: block;
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--light-text);
-  margin-bottom: var(--space-2);
 }
 
 .settings-row {

@@ -115,6 +115,10 @@ function cacheElements() {
     saveSettings: document.getElementById('saveSettings'),
     deleteAllData: document.getElementById('deleteAllData'),
     
+    // Personalization
+    changeNameRow: document.getElementById('changeNameRow'),
+    currentNameDisplay: document.getElementById('currentNameDisplay'),
+    
     // Summary
     cycleCount: document.getElementById('cycleCount'),
     cycleProgress: document.getElementById('cycleProgress'),
