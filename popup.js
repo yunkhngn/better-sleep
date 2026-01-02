@@ -61,6 +61,8 @@ async function continueInit() {
 function cacheElements() {
   elements = {
     // Panels
+    // Containers
+    mainContainer: document.getElementById('app'),
     dayPanel: document.getElementById('dayPanel'),
     nightPanel: document.getElementById('nightPanel'),
     actionPanel: document.getElementById('actionPanel'),
