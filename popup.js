@@ -388,6 +388,15 @@ async function handlePrimaryAction() {
   } else {
     // Start sleep
     await Storage.startSleep();
+    
+    // Verify storage persistence
+    const verified = await Storage.isSleeping();
+    if (!verified) {
+      console.error('Failed to persist sleep session');
+      // Retry once
+      await Storage.startSleep();
+    }
+    
     state.isSleeping = true;
     await updateUI();
     
@@ -432,6 +441,17 @@ async function handleMoodSelect(mood) {
   if (logEntry) {
     showView('summary');
     loadSummaryData(logEntry);
+  } else {
+    // Error handling - if endSleep failed (likely due to missing session)
+    // Show a toast or update greeting temporarily
+    const originalGreeting = elements.greetingText.textContent;
+    elements.greetingText.textContent = "Error: Use 'Planner' to reset";
+    elements.greetingText.style.color = "#ef4444";
+    
+    setTimeout(() => {
+      elements.greetingText.textContent = originalGreeting;
+      elements.greetingText.style.color = "";
+    }, 3000);
   }
 }
 
