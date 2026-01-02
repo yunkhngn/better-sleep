@@ -12,6 +12,17 @@ const Planner = {
   MAX_CYCLES: 6,
 
   /**
+   * Calculate suggestions based on mode
+   */
+  calculateSuggestions(time, mode, latency) {
+    if (mode === 'wake') {
+      return this.calculateSleepTimes(time, latency);
+    } else {
+      return this.calculateWakeTimes(time, latency);
+    }
+  },
+
+  /**
    * Parse time string (HH:mm) to minutes since midnight
    */
   timeToMinutes(timeStr) {
