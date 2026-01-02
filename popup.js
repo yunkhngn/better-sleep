@@ -15,7 +15,11 @@ let state = {
   settingsTab: 'reminder',
   scheduleScope: 'everyday',
   userName: null,
-  currentLang: 'en'
+  scheduleScope: 'everyday',
+  userName: null,
+  currentLang: 'en',
+  plannerWakeTime: '07:00',
+  plannerSleepTime: '22:00'
 };
 
 /**
@@ -485,6 +489,17 @@ function hideAllViews() {
  * Switch planner mode
  */
 function switchPlannerMode(mode) {
+  // Save current time to previous mode state
+  const currentHour = elements.plannerHour.value;
+  const currentMinute = elements.plannerMinute.value;
+  const currentTime = `${currentHour}:${currentMinute}`;
+  
+  if (state.plannerMode === 'wake') {
+    state.plannerWakeTime = currentTime;
+  } else {
+    state.plannerSleepTime = currentTime;
+  }
+  
   state.plannerMode = mode;
   
   elements.plannerTabs.forEach(tab => {
@@ -496,6 +511,13 @@ function switchPlannerMode(mode) {
     : 'targetSleepTime';
     
   elements.plannerInputLabel.textContent = i18n.t(elements.plannerInputLabel.dataset.i18n);
+  
+  // Load time for new mode
+  const newTime = mode === 'wake' ? state.plannerWakeTime : state.plannerSleepTime;
+  const [hour, minute] = newTime.split(':');
+  
+  elements.plannerHour.value = hour;
+  elements.plannerMinute.value = minute;
   
   updateSuggestions();
 }
@@ -647,6 +669,15 @@ async function loadSettings() {
   
   // Initialize Planner inputs with saved values
   const defaultWakeTime = defaultSchedule.wakeTime || '07:00';
+  state.plannerWakeTime = defaultWakeTime;
+  
+  // Set default sleep time to now (rounded)
+  const now = new Date();
+  const currentHour = String(now.getHours()).padStart(2, '0');
+  const currentMinute = String(Math.round(now.getMinutes() / 5) * 5).padStart(2, '0');
+  state.plannerSleepTime = `${currentHour}:${currentMinute}`;
+  
+  // Apply initial values based on current mode (default wake)
   const [initHour, initMinute] = defaultWakeTime.split(':');
   populateTimeSelects(initHour, initMinute);
   updateSuggestions(); // Generate initial suggestions based on saved time
