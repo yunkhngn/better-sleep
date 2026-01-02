@@ -300,9 +300,14 @@
           <!-- Personalization -->
           <div class="settings-section">
             <label class="settings-label" data-i18n="personalization">Personalization</label>
-            <div class="setting-row">
-               <span class="setting-value" id="currentNameDisplay"></span>
-               <button class="btn-secondary" id="changeNameBtn" data-i18n="changeName">Change Name</button>
+            <div class="setting-card-row" id="changeNameRow">
+              <span class="setting-card-label" data-i18n="displayName">Display Name</span>
+              <div class="setting-card-value-group">
+                <span class="setting-value" id="currentNameDisplay"></span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </div>
             </div>
           </div>
 

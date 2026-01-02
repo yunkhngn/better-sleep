@@ -261,10 +261,9 @@ function setupEventListeners() {
   elements.deleteAllData.addEventListener('click', handleDeleteAllData);
 
   // Change Name
-  if (elements.changeNameBtn) {
-    elements.changeNameBtn.addEventListener('click', () => {
-      showNameModal();
-    });
+  // Change Name
+  if (elements.changeNameRow) {
+    elements.changeNameRow.addEventListener('click', showNameModal);
   }
 }
 

@@ -69,6 +69,8 @@ const i18n = {
       saveSettings: 'Save Settings',
       saved: 'Saved!',
       personalization: 'Personalization',
+      personalization: 'Personalization',
+      displayName: 'Display Name',
       changeName: 'Change Name',
       
       // Danger zone
@@ -175,6 +177,8 @@ const i18n = {
       saveSettings: 'Lưu cài đặt',
       saved: 'Đã lưu!',
       personalization: 'Cá nhân hóa',
+      personalization: 'Cá nhân hóa',
+      displayName: 'Tên hiển thị',
       changeName: 'Đổi tên',
       
       // Vùng nguy hiểm
@@ -280,6 +284,8 @@ const i18n = {
       saveSettings: '設定を保存',
       saved: '保存しました！',
       personalization: 'パーソナライズ',
+      personalization: '個人設定',
+      displayName: '表示名',
       changeName: '名前を変更',
       
       // 危険ゾーン
