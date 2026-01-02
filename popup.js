@@ -1,0 +1,452 @@
+/**
+ * Popup Script - Better Sleep
+ * Main UI controller for the extension popup
+ */
+
+// DOM Elements
+let elements = {};
+
+// Current state
+let state = {
+  isSleeping: false,
+  currentView: 'main',
+  plannerMode: 'wake',
+  settingsTab: 'reminder',
+  scheduleScope: 'everyday'
+};
+
+/**
+ * Initialize the popup
+ */
+async function init() {
+  cacheElements();
+  await loadState();
+  setupEventListeners();
+  startClock();
+  await updateUI();
+  await loadSettings();
+  await showTipIfAvailable();
+}
+
+/**
+ * Cache DOM elements
+ */
+function cacheElements() {
+  elements = {
+    // Main panel
+    currentTime: document.getElementById('currentTime'),
+    dayNightIcon: document.getElementById('dayNightIcon'),
+    primaryAction: document.getElementById('primaryAction'),
+    primaryActionText: document.getElementById('primaryActionText'),
+    
+    // Quick actions
+    openPlanner: document.getElementById('openPlanner'),
+    openSettings: document.getElementById('openSettings'),
+    
+    // Mood selector
+    moodSelector: document.getElementById('moodSelector'),
+    moodBtns: document.querySelectorAll('.mood-btn'),
+    
+    // Views
+    plannerView: document.getElementById('plannerView'),
+    settingsView: document.getElementById('settingsView'),
+    closePlanner: document.getElementById('closePlanner'),
+    closeSettings: document.getElementById('closeSettings'),
+    
+    // Planner
+    plannerTabs: document.querySelectorAll('.planner-tab'),
+    plannerInputLabel: document.getElementById('plannerInputLabel'),
+    plannerTimeInput: document.getElementById('plannerTimeInput'),
+    latencyInput: document.getElementById('latencyInput'),
+    suggestionsList: document.getElementById('suggestionsList'),
+    
+    // Settings tabs
+    navTabs: document.querySelectorAll('.nav-tab'),
+    reminderTab: document.getElementById('reminderTab'),
+    summaryTab: document.getElementById('summaryTab'),
+    weeklyTab: document.getElementById('weeklyTab'),
+    
+    // Settings controls
+    reminderEnabled: document.getElementById('reminderEnabled'),
+    reminderSettings: document.getElementById('reminderSettings'),
+    targetBedtime: document.getElementById('targetBedtime'),
+    graceMinutes: document.getElementById('graceMinutes'),
+    scopeBtns: document.querySelectorAll('.scope-btn'),
+    saveSettings: document.getElementById('saveSettings'),
+    
+    // Summary
+    summaryContent: document.getElementById('summaryContent'),
+    
+    // Weekly chart
+    weeklyChart: document.getElementById('weeklyChart'),
+    chartTooltip: document.getElementById('chartTooltip'),
+    
+    // Tip
+    tipBanner: document.getElementById('tipBanner'),
+    tipText: document.getElementById('tipText')
+  };
+}
+
+/**
+ * Load current state from storage
+ */
+async function loadState() {
+  state.isSleeping = await Storage.isSleeping();
+}
+
+/**
+ * Set up event listeners
+ */
+function setupEventListeners() {
+  // Primary action button
+  elements.primaryAction.addEventListener('click', handlePrimaryAction);
+  
+  // Mood buttons
+  elements.moodBtns.forEach(btn => {
+    btn.addEventListener('click', () => handleMoodSelect(btn.dataset.mood));
+  });
+  
+  // View navigation
+  elements.openPlanner.addEventListener('click', () => showView('planner'));
+  elements.openSettings.addEventListener('click', () => showView('settings'));
+  elements.closePlanner.addEventListener('click', () => hideView('planner'));
+  elements.closeSettings.addEventListener('click', () => hideView('settings'));
+  
+  // Planner tabs
+  elements.plannerTabs.forEach(tab => {
+    tab.addEventListener('click', () => switchPlannerMode(tab.dataset.mode));
+  });
+  
+  // Planner inputs
+  elements.plannerTimeInput.addEventListener('change', updateSuggestions);
+  elements.latencyInput.addEventListener('change', updateSuggestions);
+  
+  // Settings tabs
+  elements.navTabs.forEach(tab => {
+    tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
+  });
+  
+  // Reminder toggle
+  elements.reminderEnabled.addEventListener('change', toggleReminderSettings);
+  
+  // Scope buttons
+  elements.scopeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      elements.scopeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.scheduleScope = btn.dataset.scope;
+    });
+  });
+  
+  // Save settings
+  elements.saveSettings.addEventListener('click', saveSettings);
+}
+
+/**
+ * Start the clock
+ */
+function startClock() {
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+/**
+ * Update the clock display
+ */
+function updateClock() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  elements.currentTime.textContent = `${hours}:${minutes}`;
+  
+  // Update day/night icon
+  const hour = now.getHours();
+  const isNight = hour >= 20 || hour < 6;
+  
+  if (isNight) {
+    // Moon icon
+    elements.dayNightIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    elements.dayNightIcon.classList.remove('sun');
+  } else {
+    // Sun icon
+    elements.dayNightIcon.innerHTML = `
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    `;
+    elements.dayNightIcon.classList.add('sun');
+  }
+}
+
+/**
+ * Update UI based on current state
+ */
+async function updateUI() {
+  const primaryIcon = elements.primaryAction.querySelector('.icon');
+  
+  if (state.isSleeping) {
+    elements.primaryActionText.textContent = "I'm awake";
+    primaryIcon.innerHTML = `
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    `;
+  } else {
+    elements.primaryActionText.textContent = "Going to sleep";
+    primaryIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+  
+  // Update reminder indicator
+  const reminderState = await Storage.get('reminderState');
+  if (reminderState && reminderState.enabled) {
+    elements.openSettings.classList.add('active');
+  } else {
+    elements.openSettings.classList.remove('active');
+  }
+}
+
+/**
+ * Handle primary action button click
+ */
+async function handlePrimaryAction() {
+  if (state.isSleeping) {
+    // Show mood selector
+    elements.moodSelector.classList.remove('hidden');
+  } else {
+    // Start sleep
+    await Storage.startSleep();
+    state.isSleeping = true;
+    await updateUI();
+    
+    // Notify background to clear badge
+    chrome.runtime.sendMessage({ action: 'sleepStarted' });
+  }
+}
+
+/**
+ * Handle mood selection
+ */
+async function handleMoodSelect(mood) {
+  // Visual feedback
+  elements.moodBtns.forEach(btn => btn.classList.remove('selected'));
+  document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+  
+  // Save sleep log with mood
+  await Storage.endSleep(mood);
+  state.isSleeping = false;
+  
+  // Hide mood selector after short delay
+  setTimeout(() => {
+    elements.moodSelector.classList.add('hidden');
+    elements.moodBtns.forEach(btn => btn.classList.remove('selected'));
+  }, 300);
+  
+  await updateUI();
+  
+  // Update summary if visible
+  if (state.settingsTab === 'summary') {
+    await loadSummary();
+  }
+}
+
+/**
+ * Show a view
+ */
+function showView(view) {
+  if (view === 'planner') {
+    elements.plannerView.classList.add('active');
+    elements.settingsView.classList.remove('active');
+    updateSuggestions();
+  } else if (view === 'settings') {
+    elements.settingsView.classList.add('active');
+    elements.plannerView.classList.remove('active');
+    
+    // Initialize chart if on weekly tab
+    if (state.settingsTab === 'weekly') {
+      initChart();
+    }
+  }
+  state.currentView = view;
+}
+
+/**
+ * Hide a view
+ */
+function hideView(view) {
+  if (view === 'planner') {
+    elements.plannerView.classList.remove('active');
+  } else if (view === 'settings') {
+    elements.settingsView.classList.remove('active');
+  }
+  state.currentView = 'main';
+}
+
+/**
+ * Switch planner mode
+ */
+function switchPlannerMode(mode) {
+  state.plannerMode = mode;
+  
+  elements.plannerTabs.forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.mode === mode);
+  });
+  
+  elements.plannerInputLabel.textContent = mode === 'wake' 
+    ? 'Target wake time' 
+    : 'Target sleep time';
+  
+  updateSuggestions();
+}
+
+/**
+ * Update suggestions based on input
+ */
+function updateSuggestions() {
+  const time = elements.plannerTimeInput.value;
+  const latency = parseInt(elements.latencyInput.value) || 15;
+  
+  let suggestions;
+  if (state.plannerMode === 'wake') {
+    suggestions = Planner.calculateSleepTimes(time, latency);
+  } else {
+    suggestions = Planner.calculateWakeTimes(time, latency);
+  }
+  
+  const label = state.plannerMode === 'wake' ? 'Go to bed at' : 'Wake up at';
+  
+  elements.suggestionsList.innerHTML = suggestions.map(s => `
+    <div class="suggestion-item">
+      <span class="suggestion-time">${s.time}</span>
+      <span class="suggestion-cycles">${s.cycles} cycles · ${s.duration}</span>
+    </div>
+  `).join('');
+}
+
+/**
+ * Switch settings tab
+ */
+function switchSettingsTab(tab) {
+  state.settingsTab = tab;
+  
+  elements.navTabs.forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  
+  // Show/hide tab content
+  document.querySelectorAll('.settings-tab').forEach(t => {
+    t.classList.remove('active');
+  });
+  
+  if (tab === 'reminder') {
+    elements.reminderTab.classList.add('active');
+  } else if (tab === 'summary') {
+    elements.summaryTab.classList.add('active');
+    loadSummary();
+  } else if (tab === 'weekly') {
+    elements.weeklyTab.classList.add('active');
+    initChart();
+  }
+}
+
+/**
+ * Toggle reminder settings visibility
+ */
+function toggleReminderSettings() {
+  const enabled = elements.reminderEnabled.checked;
+  elements.reminderSettings.style.opacity = enabled ? '1' : '0.5';
+  elements.reminderSettings.style.pointerEvents = enabled ? 'auto' : 'none';
+}
+
+/**
+ * Load settings from storage
+ */
+async function loadSettings() {
+  const schedule = await Storage.getEffectiveSchedule();
+  const reminderState = await Storage.get('reminderState');
+  
+  elements.reminderEnabled.checked = reminderState?.enabled || false;
+  elements.targetBedtime.value = schedule.bedtime || '22:30';
+  elements.graceMinutes.value = schedule.graceMinutes || 15;
+  elements.latencyInput.value = schedule.sleepLatency || 15;
+  
+  toggleReminderSettings();
+}
+
+/**
+ * Save settings
+ */
+async function saveSettings() {
+  const schedule = {
+    bedtime: elements.targetBedtime.value,
+    graceMinutes: parseInt(elements.graceMinutes.value) || 15,
+    sleepLatency: parseInt(elements.latencyInput.value) || 15
+  };
+  
+  await Storage.updateSchedule(schedule, state.scheduleScope);
+  await Storage.updateReminderState({
+    enabled: elements.reminderEnabled.checked
+  });
+  
+  // Notify background to update alarms
+  chrome.runtime.sendMessage({ action: 'settingsUpdated' });
+  
+  // Visual feedback
+  const btn = elements.saveSettings;
+  const originalText = btn.textContent;
+  btn.textContent = 'Saved!';
+  btn.style.background = 'var(--mood-refreshed)';
+  
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.style.background = '';
+  }, 1500);
+}
+
+/**
+ * Load summary data
+ */
+async function loadSummary() {
+  const lastLog = await Storage.getLastLog();
+  
+  if (lastLog) {
+    const summary = Summary.generateSummary(lastLog);
+    elements.summaryContent.innerHTML = Summary.generateSummaryHTML(summary);
+  } else {
+    elements.summaryContent.innerHTML = '<p class="text-muted" style="text-align: center;">No sleep data yet. Start by logging your sleep!</p>';
+  }
+}
+
+/**
+ * Initialize weekly chart
+ */
+function initChart() {
+  Chart.init('weeklyChart', 'chartTooltip');
+  Chart.render();
+}
+
+/**
+ * Show tip if available
+ */
+async function showTipIfAvailable() {
+  const tip = await Tips.getTodaysTip();
+  
+  if (tip) {
+    elements.tipText.textContent = tip;
+    elements.tipBanner.classList.remove('hidden');
+  }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', init);
