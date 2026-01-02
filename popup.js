@@ -52,6 +52,7 @@ async function continueInit() {
   await checkBedtimeReminder();
   generateStars();
   updateLanguageUI();
+  updateAllText();
 }
 
 /**
@@ -140,6 +141,13 @@ function cacheElements() {
     nameInput: document.getElementById('nameInput'),
     nameSubmit: document.getElementById('nameSubmit'),
     
+    // Celestial icons
+    celestialDisplay: document.getElementById('celestialDisplay'),
+    sunriseIcon: document.getElementById('sunriseIcon'),
+    noonIcon: document.getElementById('noonIcon'),
+    sunsetIcon: document.getElementById('sunsetIcon'),
+    moonNightIcon: document.getElementById('moonNightIcon'),
+
     // Language buttons
     langBtns: document.querySelectorAll('.lang-btn'),
     
@@ -271,12 +279,20 @@ function updateClock() {
 /**
  * Update time of day (day/night mode)
  */
+/**
+ * Update time of day (day/night mode and celestial icons)
+ */
 function updateTimeOfDay() {
   const hour = new Date().getHours();
-  const isNight = hour >= 20 || hour < 6;
+  // Night: 20-5, Sunrise: 5-11, Noon: 11-14, Sunset: 14-20
+  const isNight = hour >= 20 || hour < 5;
+  const isSunrise = hour >= 5 && hour < 11;
+  const isNoon = hour >= 11 && hour < 14;
+  const isSunset = hour >= 14 && hour < 20;
   
   state.isNightMode = isNight;
   
+  // Toggle panels
   if (isNight) {
     elements.dayPanel.classList.add('hidden');
     elements.nightPanel.classList.remove('hidden');
@@ -285,6 +301,14 @@ function updateTimeOfDay() {
     elements.dayPanel.classList.remove('hidden');
     elements.nightPanel.classList.add('hidden');
     elements.actionPanel.classList.remove('light-mode');
+  }
+  
+  // Toggle celestial icons
+  if (elements.sunriseIcon) {
+    elements.sunriseIcon.classList.toggle('hidden', !isSunrise);
+    elements.noonIcon.classList.toggle('hidden', !isNoon);
+    elements.sunsetIcon.classList.toggle('hidden', !isSunset);
+    elements.moonNightIcon.classList.toggle('hidden', !isNight);
   }
 }
 
@@ -878,7 +902,24 @@ async function handleLanguageChange(lang) {
   await i18n.setLanguage(lang);
   updateLanguageUI();
   updateGreeting();
-  // Note: Full UI translation would update all data-i18n elements
+  updateAllText();
+}
+
+/**
+ * Update all text elements with i18n translations
+ */
+function updateAllText() {
+  // Update all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent = i18n.t(key);
+  });
+  
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    el.placeholder = i18n.t(key);
+  });
 }
 
 // Initialize when DOM is ready

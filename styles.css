@@ -124,6 +124,12 @@
   color: var(--moon-color);
 }
 
+.modal-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+}
+
 .modal-title {
   font-size: var(--font-size-xl);
   font-weight: 600;
@@ -315,6 +321,220 @@ body {
   50% {
     transform: scale(1.02);
     box-shadow: 0 0 80px var(--sun-glow);
+  }
+}
+
+/* ========================================
+   Celestial Icons - Time of Day
+   ======================================== */
+.celestial-icon {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+}
+
+/* Morning: Sunrise */
+.sunrise-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sunrise-glow {
+  position: absolute;
+  bottom: 20px;
+  width: 200px;
+  height: 100px;
+  background: radial-gradient(ellipse at bottom, rgba(251, 191, 36, 0.4) 0%, rgba(251, 146, 60, 0.2) 40%, transparent 70%);
+  border-radius: 50%;
+}
+
+.sunrise-sun {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(180deg, #fcd34d 0%, #f97316 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.6);
+  position: relative;
+  z-index: 2;
+  animation: sunRise 3s ease-out;
+}
+
+.sunrise-horizon {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(180deg, transparent 0%, rgba(251, 191, 36, 0.15) 100%);
+}
+
+@keyframes sunRise {
+  0% {
+    transform: translateY(30px);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Noon: Bright Sun */
+.noon-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.noon-sun {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, #fef08a 0%, #fbbf24 40%, #f59e0b 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 60px rgba(251, 191, 36, 0.7), 0 0 100px rgba(251, 191, 36, 0.4);
+  position: relative;
+  animation: noonGlow 2s ease-in-out infinite;
+}
+
+.noon-rays {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.3), transparent 10%);
+  animation: raysSpin 20s linear infinite;
+}
+
+@keyframes noonGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 60px rgba(251, 191, 36, 0.7), 0 0 100px rgba(251, 191, 36, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 80px rgba(251, 191, 36, 0.9), 0 0 120px rgba(251, 191, 36, 0.5);
+  }
+}
+
+@keyframes raysSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Afternoon: Sunset */
+.sunset-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sunset-glow {
+  position: absolute;
+  bottom: 30px;
+  width: 200px;
+  height: 120px;
+  background: radial-gradient(ellipse at bottom, rgba(249, 115, 22, 0.5) 0%, rgba(239, 68, 68, 0.3) 30%, rgba(139, 92, 246, 0.2) 60%, transparent 80%);
+  border-radius: 50%;
+}
+
+.sunset-sun {
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(180deg, #fcd34d 0%, #f97316 40%, #ef4444 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 50px rgba(249, 115, 22, 0.6);
+  position: relative;
+  z-index: 2;
+}
+
+.sunset-clouds {
+  position: absolute;
+  bottom: 10px;
+  width: 140px;
+  height: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1) 30%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 70%, transparent);
+  border-radius: 15px;
+  z-index: 1;
+}
+
+/* Night: Moon with Stars */
+.moon-night-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moon-glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(199, 210, 254, 0.3) 0%, transparent 60%);
+  border-radius: var(--radius-full);
+}
+
+.moon-surface {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 40px rgba(199, 210, 254, 0.5);
+  position: relative;
+  z-index: 2;
+}
+
+.moon-stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.star-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: var(--radius-full);
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+.star-dot:nth-child(1) {
+  top: 10%;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.star-dot:nth-child(2) {
+  top: 25%;
+  right: 10%;
+  animation-delay: 0.5s;
+}
+
+.star-dot:nth-child(3) {
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 1s;
+}
+
+@keyframes starTwinkle {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
   }
 }
 
