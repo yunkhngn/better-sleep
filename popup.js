@@ -230,7 +230,6 @@ function setupEventListeners() {
   
   // Planner Time Picker
   if (elements.plannerHour && elements.plannerMinute) {
-    populateTimeSelects();
     elements.plannerHour.addEventListener('change', updateSuggestions);
     elements.plannerMinute.addEventListener('change', updateSuggestions);
   }
@@ -501,28 +500,7 @@ function switchPlannerMode(mode) {
   updateSuggestions();
 }
 
-/**
- * Populate hour and minute select elements
- */
-function populateTimeSelects() {
-  for (let i = 0; i < 24; i++) {
-    const option = document.createElement('option');
-    option.value = String(i).padStart(2, '0');
-    option.textContent = String(i).padStart(2, '0');
-    elements.plannerHour.appendChild(option);
-  }
-  for (let i = 0; i < 60; i += 5) { // Increment by 5 minutes
-    const option = document.createElement('option');
-    option.value = String(i).padStart(2, '0');
-    option.textContent = String(i).padStart(2, '0');
-    elements.plannerMinute.appendChild(option);
-  }
 
-  // Set default to current time
-  const now = new Date();
-  elements.plannerHour.value = String(now.getHours()).padStart(2, '0');
-  elements.plannerMinute.value = String(Math.round(now.getMinutes() / 5) * 5).padStart(2, '0');
-}
 
 /**
  * Update suggestions based on input
@@ -661,7 +639,17 @@ async function loadSettings() {
     elements.currentNameDisplay.textContent = state.userName || i18n.t('defaultName');
   }
 
+  if (elements.currentNameDisplay) {
+    elements.currentNameDisplay.textContent = state.userName || i18n.t('defaultName');
+  }
+
   toggleReminderSettings();
+  
+  // Initialize Planner inputs with saved values
+  const defaultWakeTime = defaultSchedule.wakeTime || '07:00';
+  const [initHour, initMinute] = defaultWakeTime.split(':');
+  populateTimeSelects(initHour, initMinute);
+  updateSuggestions(); // Generate initial suggestions based on saved time
 }
 
 /**
@@ -1015,7 +1003,7 @@ async function handleLanguageChange(lang) {
 /**
  * Populate custom time picker selects
  */
-function populateTimeSelects() {
+function populateTimeSelects(defaultHour = '07', defaultMinute = '00') {
   // Hours (00-23)
   elements.plannerHour.innerHTML = '';
   for (let i = 0; i < 24; i++) {
@@ -1023,7 +1011,7 @@ function populateTimeSelects() {
     const option = document.createElement('option');
     option.value = val;
     option.textContent = val;
-    if (i === 7) option.selected = true; // Default 07:00
+    if (val === defaultHour) option.selected = true;
     elements.plannerHour.appendChild(option);
   }
   
@@ -1034,6 +1022,7 @@ function populateTimeSelects() {
     const option = document.createElement('option');
     option.value = val;
     option.textContent = val;
+    if (val === defaultMinute) option.selected = true;
     elements.plannerMinute.appendChild(option);
   }
 }
