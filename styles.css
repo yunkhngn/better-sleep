@@ -1652,9 +1652,23 @@ body {
 }
 
 .btn-save:hover {
-  background: var(--dark-bg-secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background: #20b0a2;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Danger Zone */
